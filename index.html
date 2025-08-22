@@ -112,6 +112,55 @@
         .hidden {
             display: none;
         }
+        .archive-day {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .archive-day:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+        .archive-day.completed {
+            background: #dcfce7;
+            border-color: #16a34a;
+        }
+        .archive-day.current {
+            background: #dbeafe;
+            border-color: #2563eb;
+            font-weight: bold;
+        }
+        .archive-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .archive-date {
+            font-weight: bold;
+            color: #333;
+        }
+        .archive-book {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+        .archive-status {
+            font-size: 18px;
+        }
+        .nav-buttons {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav-buttons button {
+            margin: 0 5px;
+        }
     </style>
 </head>
 <body>
@@ -119,28 +168,41 @@
     <p class="subtitle">Daily Book Guessing Game</p>
     <p class="date" id="current-date"></p>
 
-    <div class="container">
-        <h3>📋 Clues (<span id="clue-count">1</span>/6)</h3>
-        <div id="clues"></div>
+    <div class="nav-buttons">
+        <button onclick="showTodaysGame()" id="today-btn">📅 Today's Game</button>
+        <button onclick="showArchiveList()" id="archive-btn">🗂️ Archive</button>
     </div>
 
-    <div class="container" id="input-section">
-        <h3>Your Guess</h3>
-        <input type="text" id="guess-input" placeholder="Enter book title...">
-        <button onclick="makeGuess()">Submit</button>
-    </div>
-
-    <div class="container hidden" id="guesses-section">
-        <h3>Your Guesses (<span id="guess-count">0</span>/6)</h3>
-        <div id="guesses"></div>
-    </div>
-
-    <div class="container hidden" id="result-section">
-        <div id="result-text"></div>
-        <div class="library-link">
-            <p>📖 <strong>Available at Southold Free Library</strong></p>
-            <a href="https://southold-suffc.na.iiivega.com" target="_blank">Search Our Catalog</a>
+    <div id="game-section">
+        <div class="container">
+            <h3>📋 Clues (<span id="clue-count">1</span>/6)</h3>
+            <div id="clues"></div>
         </div>
+
+        <div class="container" id="input-section">
+            <h3>Your Guess</h3>
+            <input type="text" id="guess-input" placeholder="Enter book title...">
+            <button onclick="makeGuess()">Submit</button>
+        </div>
+
+        <div class="container hidden" id="guesses-section">
+            <h3>Your Guesses (<span id="guess-count">0</span>/6)</h3>
+            <div id="guesses"></div>
+        </div>
+
+        <div class="container hidden" id="result-section">
+            <div id="result-text"></div>
+            <div class="library-link">
+                <p>📖 <strong>Available at Southold Free Library</strong></p>
+                <a href="https://southold-suffc.na.iiivega.com" target="_blank">Search Our Catalog</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container hidden" id="archive-section">
+        <h3>🗂️ Game Archive</h3>
+        <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Click any day to play that puzzle</p>
+        <div id="archive-list" style="max-height: 400px; overflow-y: auto;"></div>
     </div>
 
     <div style="text-align: center; margin-top: 30px; padding: 20px; color: #666; font-size: 14px;">
@@ -149,7 +211,7 @@
     </div>
 
     <script>
-        // Simplified book list for testing
+        // Extended book list for better variety
         const books = [
             { title: "PRIDE AND PREJUDICE", author: "Jane Austen" },
             { title: "THE GREAT GATSBY", author: "F. Scott Fitzgerald" },
@@ -160,55 +222,72 @@
             { title: "JANE EYRE", author: "Charlotte Brontë" },
             { title: "THE CATCHER IN THE RYE", author: "J.D. Salinger" },
             { title: "MOBY DICK", author: "Herman Melville" },
-            { title: "WAR AND PEACE", author: "Leo Tolstoy" }
+            { title: "WAR AND PEACE", author: "Leo Tolstoy" },
+            { title: "THE LORD OF THE RINGS", author: "J.R.R. Tolkien" },
+            { title: "BRAVE NEW WORLD", author: "Aldous Huxley" },
+            { title: "WUTHERING HEIGHTS", author: "Emily Brontë" },
+            { title: "THE SCARLET LETTER", author: "Nathaniel Hawthorne" },
+            { title: "LITTLE WOMEN", author: "Louisa May Alcott" },
+            { title: "FRANKENSTEIN", author: "Mary Shelley" },
+            { title: "DRACULA", author: "Bram Stoker" },
+            { title: "ALICE'S ADVENTURES IN WONDERLAND", author: "Lewis Carroll" },
+            { title: "THE ADVENTURES OF HUCKLEBERRY FINN", author: "Mark Twain" },
+            { title: "CRIME AND PUNISHMENT", author: "Fyodor Dostoyevsky" },
+            { title: "THE COUNT OF MONTE CRISTO", author: "Alexandre Dumas" },
+            { title: "ANNA KARENINA", author: "Leo Tolstoy" },
+            { title: "THE PICTURE OF DORIAN GRAY", author: "Oscar Wilde" },
+            { title: "GREAT EXPECTATIONS", author: "Charles Dickens" },
+            { title: "A TALE OF TWO CITIES", author: "Charles Dickens" },
+            { title: "THE GRAPES OF WRATH", author: "John Steinbeck" },
+            { title: "OF MICE AND MEN", author: "John Steinbeck" },
+            { title: "FAHRENHEIT 451", author: "Ray Bradbury" },
+            { title: "LORD OF THE FLIES", author: "William Golding" },
+            { title: "THE OLD MAN AND THE SEA", author: "Ernest Hemingway" }
         ];
 
         let currentBook;
         let guesses = [];
         let cluesShown = 1;
         let gameOver = false;
+        let selectedDate = null;
+        let gameHistory = {};
+
+        // Load game history from localStorage (or initialize empty)
+        function loadGameHistory() {
+            try {
+                const saved = localStorage.getItem('shelflife-history');
+                gameHistory = saved ? JSON.parse(saved) : {};
+            } catch (e) {
+                gameHistory = {};
+            }
+        }
+
+        // Save game history to localStorage
+        function saveGameHistory() {
+            try {
+                localStorage.setItem('shelflife-history', JSON.stringify(gameHistory));
+            } catch (e) {
+                // localStorage not available, continue without saving
+            }
+        }
 
         function normalizeForComparison(title) {
             return title
                 .toUpperCase()
                 .trim()
-                // Remove all punctuation and special characters
                 .replace(/[^\w\s]/g, '')
-                // Normalize whitespace
                 .replace(/\s+/g, ' ')
-                // Handle compound numbers like "NINETEEN EIGHTY FOUR" -> "1984"
                 .replace(/\bNINETEEN EIGHTY FOUR\b/g, '1984')
                 .replace(/\bNINETEEN EIGHTY THREE\b/g, '1983')
                 .replace(/\bNINETEEN EIGHTY TWO\b/g, '1982')
                 .replace(/\bNINETEEN EIGHTY ONE\b/g, '1981')
                 .replace(/\bNINETEEN EIGHTY\b/g, '1980')
-                .replace(/\bNINETEEN SEVENTY NINE\b/g, '1979')
-                .replace(/\bNINETEEN SEVENTY EIGHT\b/g, '1978')
-                .replace(/\bNINETEEN SEVENTY SEVEN\b/g, '1977')
-                .replace(/\bNINETEEN SEVENTY SIX\b/g, '1976')
-                .replace(/\bNINETEEN SEVENTY FIVE\b/g, '1975')
-                .replace(/\bNINETEEN SEVENTY FOUR\b/g, '1974')
-                .replace(/\bNINETEEN SEVENTY THREE\b/g, '1973')
-                .replace(/\bNINETEEN SEVENTY TWO\b/g, '1972')
-                .replace(/\bNINETEEN SEVENTY ONE\b/g, '1971')
-                .replace(/\bNINETEEN SEVENTY\b/g, '1970')
                 .replace(/\bTWENTY TWENTY FOUR\b/g, '2024')
                 .replace(/\bTWENTY TWENTY THREE\b/g, '2023')
                 .replace(/\bTWENTY TWENTY TWO\b/g, '2022')
                 .replace(/\bTWENTY TWENTY ONE\b/g, '2021')
                 .replace(/\bTWENTY TWENTY\b/g, '2020')
                 .replace(/\bTWO THOUSAND\b/g, '2000')
-                .replace(/\bTWO THOUSAND ONE\b/g, '2001')
-                .replace(/\bTWO THOUSAND TWO\b/g, '2002')
-                .replace(/\bTWO THOUSAND THREE\b/g, '2003')
-                .replace(/\bTWO THOUSAND FOUR\b/g, '2004')
-                .replace(/\bTWO THOUSAND FIVE\b/g, '2005')
-                .replace(/\bTWO THOUSAND SIX\b/g, '2006')
-                .replace(/\bTWO THOUSAND SEVEN\b/g, '2007')
-                .replace(/\bTWO THOUSAND EIGHT\b/g, '2008')
-                .replace(/\bTWO THOUSAND NINE\b/g, '2009')
-                .replace(/\bTWO THOUSAND TEN\b/g, '2010')
-                // Handle other compound numbers
                 .replace(/\bTWENTY ONE\b/g, '21')
                 .replace(/\bTWENTY TWO\b/g, '22')
                 .replace(/\bTWENTY THREE\b/g, '23')
@@ -218,34 +297,13 @@
                 .replace(/\bTWENTY SEVEN\b/g, '27')
                 .replace(/\bTWENTY EIGHT\b/g, '28')
                 .replace(/\bTWENTY NINE\b/g, '29')
-                .replace(/\bTHIRTY ONE\b/g, '31')
-                .replace(/\bTHIRTY TWO\b/g, '32')
-                .replace(/\bTHIRTY THREE\b/g, '33')
-                .replace(/\bTHIRTY FOUR\b/g, '34')
-                .replace(/\bTHIRTY FIVE\b/g, '35')
-                .replace(/\bTHIRTY SIX\b/g, '36')
-                .replace(/\bTHIRTY SEVEN\b/g, '37')
-                .replace(/\bTHIRTY EIGHT\b/g, '38')
-                .replace(/\bTHIRTY NINE\b/g, '39')
-                .replace(/\bFORTY ONE\b/g, '41')
-                .replace(/\bFORTY TWO\b/g, '42')
-                .replace(/\bFORTY THREE\b/g, '43')
-                .replace(/\bFORTY FOUR\b/g, '44')
-                .replace(/\bFORTY FIVE\b/g, '45')
-                .replace(/\bFORTY SIX\b/g, '46')
-                .replace(/\bFORTY SEVEN\b/g, '47')
-                .replace(/\bFORTY EIGHT\b/g, '48')
-                .replace(/\bFORTY NINE\b/g, '49')
-                .replace(/\bFIFTY ONE\b/g, '51')
-                .replace(/\bFIFTY TWO\b/g, '52')
-                .replace(/\bFIFTY THREE\b/g, '53')
-                .replace(/\bFIFTY FOUR\b/g, '54')
-                .replace(/\bFIFTY FIVE\b/g, '55')
-                .replace(/\bFIFTY SIX\b/g, '56')
-                .replace(/\bFIFTY SEVEN\b/g, '57')
-                .replace(/\bFIFTY EIGHT\b/g, '58')
-                .replace(/\bFIFTY NINE\b/g, '59')
-                // Basic single numbers
+                .replace(/\bTHIRTY\b/g, '30')
+                .replace(/\bFORTY\b/g, '40')
+                .replace(/\bFIFTY\b/g, '50')
+                .replace(/\bSIXTY\b/g, '60')
+                .replace(/\bSEVENTY\b/g, '70')
+                .replace(/\bEIGHTY\b/g, '80')
+                .replace(/\bNINETY\b/g, '90')
                 .replace(/\bONE\b/g, '1')
                 .replace(/\bTWO\b/g, '2')
                 .replace(/\bTHREE\b/g, '3')
@@ -266,13 +324,6 @@
                 .replace(/\bEIGHTEEN\b/g, '18')
                 .replace(/\bNINETEEN\b/g, '19')
                 .replace(/\bTWENTY\b/g, '20')
-                .replace(/\bTHIRTY\b/g, '30')
-                .replace(/\bFORTY\b/g, '40')
-                .replace(/\bFIFTY\b/g, '50')
-                .replace(/\bSIXTY\b/g, '60')
-                .replace(/\bSEVENTY\b/g, '70')
-                .replace(/\bEIGHTY\b/g, '80')
-                .replace(/\bNINETY\b/g, '90')
                 .replace(/\bHUNDRED\b/g, '100')
                 .replace(/\bTHOUSAND\b/g, '1000')
                 .trim();
@@ -282,16 +333,20 @@
             return normalizeForComparison(guess) === normalizeForComparison(target);
         }
 
-        function getTodaysBook() {
-            const today = new Date();
-            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+        function getDateKey(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function getTodaysBook(date = null) {
+            const targetDate = date || selectedDate || new Date();
+            const dayOfYear = Math.floor((targetDate - new Date(targetDate.getFullYear(), 0, 0)) / 86400000);
             return books[dayOfYear % books.length];
         }
 
         function showCurrentDate() {
-            const today = new Date();
+            const targetDate = selectedDate || new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', options);
+            document.getElementById('current-date').textContent = targetDate.toLocaleDateString('en-US', options);
         }
 
         function generateClues(book) {
@@ -300,7 +355,7 @@
                     "🌟 A spirited woman and proud gentleman overcome first judgments to find love",
                     "👤 Author: British author, Austen",
                     "📅 Published: 1813",
-                    "🎭 Themes: Social class, marriage, personal growth",
+                    "🎭 Themes: Social class, marriage, personal growth through understanding",
                     "📖 Setting: English countryside estates in the Regency era", 
                     "👥 Character: Elizabeth Bennet"
                 ],
@@ -308,8 +363,8 @@
                     "🌟 A mysterious millionaire throws lavish parties hoping to win back his lost love",
                     "👤 Author: American author, Fitzgerald",
                     "📅 Published: 1925",
-                    "🎭 Themes: The American Dream, wealth vs morality",
-                    "📖 Setting: Long Island and New York City, 1922",
+                    "🎭 Themes: The American Dream, wealth vs morality, impossible past",
+                    "📖 Setting: Long Island and New York City, summer of 1922",
                     "👥 Character: Jay Gatsby"
                 ],
                 "TO KILL A MOCKINGBIRD": [
@@ -324,7 +379,7 @@
                     "🌟 An orphaned boy discovers he's famous in a magical world",
                     "👤 Author: British author, Rowling",
                     "📅 Published: 1997", 
-                    "🎭 Themes: Good vs evil, friendship, coming of age",
+                    "🎭 Themes: Good vs evil, friendship, sacrifice, coming of age",
                     "📖 Setting: A school of witchcraft and wizardry in Scotland",
                     "👥 Character: Harry Potter"
                 ],
@@ -332,20 +387,252 @@
                     "🌟 In a surveillance state where Big Brother watches all, one man dares remember freedom",
                     "👤 Author: British author, Orwell",
                     "📅 Published: 1949",
-                    "🎭 Themes: Totalitarianism, surveillance, truth manipulation",
+                    "🎭 Themes: Totalitarianism, surveillance, truth manipulation, individual freedom",
                     "📖 Setting: Dystopian London under constant government monitoring",
                     "👥 Character: Winston Smith"
+                ],
+                "THE HOBBIT": [
+                    "🌟 A reluctant home-loving creature embarks on an unexpected adventure with thirteen companions",
+                    "👤 Author: British author, Tolkien",
+                    "📅 Published: 1937",
+                    "🎭 Themes: Adventure, courage, greed, heroism from unlikely sources",
+                    "📖 Setting: Middle-earth, including the Shire and Lonely Mountain",
+                    "👥 Character: Bilbo Baggins"
+                ],
+                "JANE EYRE": [
+                    "🌟 An orphaned governess faces a brooding employer with dark secrets",
+                    "👤 Author: British author, Charlotte Brontë",
+                    "📅 Published: 1847",
+                    "🎭 Themes: Independence, love vs. morality, social class, religion",
+                    "📖 Setting: Yorkshire moors and Thornfield Hall in Victorian England",
+                    "👥 Character: Jane Eyre"
+                ],
+                "THE CATCHER IN THE RYE": [
+                    "🌟 A troubled teenager wanders New York City after being expelled from prep school",
+                    "👤 Author: American author, Salinger",
+                    "📅 Published: 1951",
+                    "🎭 Themes: Alienation, loss of innocence, phoniness in adult world",
+                    "📖 Setting: New York City in the 1950s",
+                    "👥 Character: Holden Caulfield"
+                ],
+                "MOBY DICK": [
+                    "🌟 A ship captain's obsessive quest for revenge against a white whale",
+                    "👤 Author: American author, Melville",
+                    "📅 Published: 1851",
+                    "🎭 Themes: Obsession, fate vs. free will, nature's power, isolation",
+                    "📖 Setting: Aboard a whaling ship sailing the world's oceans",
+                    "👥 Character: Captain Ahab"
+                ],
+                "WAR AND PEACE": [
+                    "🌟 Russian aristocratic families navigate love and loss during Napoleon's invasion",
+                    "👤 Author: Russian author, Tolstoy",
+                    "📅 Published: 1869",
+                    "🎭 Themes: War's impact, fate, love, history's forces on individuals",
+                    "📖 Setting: Russia during the Napoleonic Wars (1805-1820)",
+                    "👥 Character: Pierre Bezukhov"
+                ],
+                "THE LORD OF THE RINGS": [
+                    "🌟 A fellowship forms to destroy a ring that could doom their world",
+                    "👤 Author: British author, Tolkien",
+                    "📅 Published: 1954-1955",
+                    "🎭 Themes: Good vs. evil, friendship, sacrifice, power's corruption",
+                    "📖 Setting: Middle-earth, from the Shire to Mount Doom",
+                    "👥 Character: Frodo Baggins"
+                ],
+                "BRAVE NEW WORLD": [
+                    "🌟 In a future society of engineered happiness, one man questions the system",
+                    "👤 Author: British author, Huxley",
+                    "📅 Published: 1932",
+                    "🎭 Themes: Technology's control, individuality vs. conformity, happiness vs. truth",
+                    "📖 Setting: Futuristic World State society",
+                    "👥 Character: John the Savage"
+                ],
+                "WUTHERING HEIGHTS": [
+                    "🌟 A foundling's obsessive love spans generations on the Yorkshire moors",
+                    "👤 Author: British author, Emily Brontë",
+                    "📅 Published: 1847",
+                    "🎭 Themes: Destructive love, revenge, social class, nature vs. civilization",
+                    "📖 Setting: Wuthering Heights and Thrushcross Grange on Yorkshire moors",
+                    "👥 Character: Heathcliff"
+                ],
+                "THE SCARLET LETTER": [
+                    "🌟 A woman bears shame and an illegitimate child in Puritan New England",
+                    "👤 Author: American author, Hawthorne",
+                    "📅 Published: 1850",
+                    "🎭 Themes: Sin and redemption, guilt, hidden truth, social judgment",
+                    "📖 Setting: Puritan Boston in the 1640s",
+                    "👥 Character: Hester Prynne"
+                ],
+                "LITTLE WOMEN": [
+                    "🌟 Four sisters grow up during the Civil War, facing poverty and personal challenges",
+                    "👤 Author: American author, Alcott",
+                    "📅 Published: 1868",
+                    "🎭 Themes: Family bonds, women's roles, poverty vs. wealth, moral growth",
+                    "📖 Setting: Concord, Massachusetts during the Civil War",
+                    "👥 Character: Jo March"
+                ],
+                "FRANKENSTEIN": [
+                    "🌟 A scientist creates life but abandons his creation with horrific consequences",
+                    "👤 Author: British author, Mary Shelley",
+                    "📅 Published: 1818",
+                    "🎭 Themes: Scientific ethics, creation vs. responsibility, isolation, revenge",
+                    "📖 Setting: Geneva, Switzerland and the Arctic",
+                    "👥 Character: Victor Frankenstein"
+                ],
+                "DRACULA": [
+                    "🌟 An ancient vampire travels to England to spread his curse",
+                    "👤 Author: Irish author, Stoker",
+                    "📅 Published: 1897",
+                    "🎭 Themes: Good vs. evil, modernity vs. tradition, fear of the foreign",
+                    "📖 Setting: Transylvania and Victorian England",
+                    "👥 Character: Count Dracula"
+                ],
+                "ALICE'S ADVENTURES IN WONDERLAND": [
+                    "🌟 A curious girl falls down a rabbit hole into a world of nonsense",
+                    "👤 Author: British author, Carroll",
+                    "📅 Published: 1865",
+                    "🎭 Themes: Growing up, logic vs. nonsense, identity, authority",
+                    "📖 Setting: Wonderland, a fantastical underground world",
+                    "👥 Character: Alice"
+                ],
+                "THE ADVENTURES OF HUCKLEBERRY FINN": [
+                    "🌟 A boy and an escaped slave travel down the Mississippi River seeking freedom",
+                    "👤 Author: American author, Twain",
+                    "📅 Published: 1884",
+                    "🎭 Themes: Racism, moral growth, freedom vs. civilization, friendship",
+                    "📖 Setting: Mississippi River in the antebellum American South",
+                    "👥 Character: Huckleberry Finn"
+                ],
+                "CRIME AND PUNISHMENT": [
+                    "🌟 A student commits murder and struggles with guilt and philosophical justification",
+                    "👤 Author: Russian author, Dostoyevsky",
+                    "📅 Published: 1866",
+                    "🎭 Themes: Guilt and redemption, morality, poverty, psychological torment",
+                    "📖 Setting: St. Petersburg, Russia in the 1860s",
+                    "👥 Character: Rodion Raskolnikov"
+                ],
+                "THE COUNT OF MONTE CRISTO": [
+                    "🌟 A wrongly imprisoned man escapes and methodically seeks revenge on his betrayers",
+                    "👤 Author: French author, Dumas",
+                    "📅 Published: 1844",
+                    "🎭 Themes: Justice vs. revenge, forgiveness, transformation, hope",
+                    "📖 Setting: France and Italy in the early 19th century",
+                    "👥 Character: Edmond Dantès"
+                ],
+                "ANNA KARENINA": [
+                    "🌟 A married aristocrat's affair leads to tragedy while others find happiness",
+                    "👤 Author: Russian author, Tolstoy",
+                    "📅 Published: 1877",
+                    "🎭 Themes: Love vs. duty, society's constraints, faith, family",
+                    "📖 Setting: Russian high society in the 1870s",
+                    "👥 Character: Anna Karenina"
+                ],
+                "THE PICTURE OF DORIAN GRAY": [
+                    "🌟 A young man's portrait ages while he remains beautiful but morally corrupt",
+                    "👤 Author: Irish author, Wilde",
+                    "📅 Published: 1890",
+                    "🎭 Themes: Beauty vs. morality, hedonism, art's influence, corruption",
+                    "📖 Setting: Victorian London",
+                    "👥 Character: Dorian Gray"
+                ],
+                "GREAT EXPECTATIONS": [
+                    "🌟 An orphan boy receives mysterious wealth and learns hard lessons about class",
+                    "👤 Author: British author, Dickens",
+                    "📅 Published: 1861",
+                    "🎭 Themes: Social class, ambition vs. loyalty, love, personal growth",
+                    "📖 Setting: Victorian England, London and the marshes of Kent",
+                    "👥 Character: Pip"
+                ],
+                "A TALE OF TWO CITIES": [
+                    "🌟 Love and sacrifice unfold against the backdrop of the French Revolution",
+                    "👤 Author: British author, Dickens",
+                    "📅 Published: 1859",
+                    "🎭 Themes: Sacrifice, resurrection, duality, revolution's chaos",
+                    "📖 Setting: London and Paris during the French Revolution",
+                    "👥 Character: Sydney Carton"
+                ],
+                "THE GRAPES OF WRATH": [
+                    "🌟 A family of farmers travels to California during the Great Depression",
+                    "👤 Author: American author, Steinbeck",
+                    "📅 Published: 1939",
+                    "🎭 Themes: Social injustice, family unity, human dignity, survival",
+                    "📖 Setting: Oklahoma to California during the Dust Bowl era",
+                    "👥 Character: Tom Joad"
+                ],
+                "OF MICE AND MEN": [
+                    "🌟 Two migrant workers dream of owning a farm during the Great Depression",
+                    "👤 Author: American author, Steinbeck",
+                    "📅 Published: 1937",
+                    "🎭 Themes: Friendship, loneliness, dreams vs. reality, mercy",
+                    "📖 Setting: California ranch during the Great Depression",
+                    "👥 Character: George Milton"
+                ],
+                "FAHRENHEIT 451": [
+                    "🌟 In a future where books are burned, a fireman begins to question his job",
+                    "👤 Author: American author, Bradbury",
+                    "📅 Published: 1953",
+                    "🎭 Themes: Censorship, knowledge vs. ignorance, technology's impact, rebellion",
+                    "📖 Setting: Dystopian future America",
+                    "👥 Character: Guy Montag"
+                ],
+                "LORD OF THE FLIES": [
+                    "🌟 British schoolboys stranded on an island descend into savagery",
+                    "👤 Author: British author, Golding",
+                    "📅 Published: 1954",
+                    "🎭 Themes: Civilization vs. savagery, human nature, power, loss of innocence",
+                    "📖 Setting: Uninhabited tropical island",
+                    "👥 Character: Ralph"
+                ],
+                "THE OLD MAN AND THE SEA": [
+                    "🌟 An aging fisherman battles a giant marlin in the Gulf Stream",
+                    "👤 Author: American author, Hemingway",
+                    "📅 Published: 1952",
+                    "🎭 Themes: Perseverance, dignity in defeat, man vs. nature, isolation",
+                    "📖 Setting: Cuban waters and the Gulf Stream",
+                    "👥 Character: Santiago"
                 ]
             };
             
             return specificClues[book.title] || [
-                "🌟 A compelling story that has captivated readers",
-                `👤 Author: ${book.author.split(' ').slice(-1)[0]}`,
-                "📅 Era: Classic literature",
-                "🎭 Themes: Human nature and society",
-                "📖 Setting: Various meaningful locations",
-                "👥 Features: Memorable characters"
+                "🌟 A compelling story that has captivated readers for generations",
+                `👤 Author: ${getAuthorNationality(book.author)}, ${book.author.split(' ').slice(-1)[0]}`,
+                `📅 Era: ${getEstimatedYear(book.title)}`,
+                `🎭 Themes: ${getGenericThemes(book.title)}`,
+                `📖 Setting: ${getGenericSetting(book.title)}`,
+                "👥 Features: Memorable characters facing profound challenges"
             ];
+        }
+
+        function getAuthorNationality(author) {
+            if (author.includes('Dickens') || author.includes('Austen') || author.includes('Brontë') || author.includes('Carroll') || author.includes('Tolkien')) return 'British author';
+            if (author.includes('Twain') || author.includes('Hemingway') || author.includes('Steinbeck') || author.includes('Fitzgerald')) return 'American author';
+            if (author.includes('Tolstoy') || author.includes('Dostoyevsky')) return 'Russian author';
+            if (author.includes('Hugo') || author.includes('Dumas')) return 'French author';
+            return 'International author';
+        }
+
+        function getEstimatedYear(title) {
+            if (title.includes('HARRY POTTER')) return '1990s-2000s';
+            if (title.includes('HUNGER GAMES') || title.includes('TWILIGHT')) return '2000s-2010s';
+            if (title.includes('DA VINCI') || title.includes('KITE RUNNER')) return 'Modern era';
+            return 'Classic period';
+        }
+
+        function getGenericThemes(title) {
+            if (title.includes('WAR') || title.includes('BATTLE')) return 'Conflict, courage, human cost of war';
+            if (title.includes('LOVE') || title.includes('ROMANCE')) return 'Love, relationships, passion, heartbreak';
+            if (title.includes('MURDER') || title.includes('CRIME')) return 'Mystery, justice, human nature';
+            if (title.includes('ADVENTURE')) return 'Adventure, discovery, personal growth';
+            return 'Human nature, morality, society, personal growth';
+        }
+
+        function getGenericSetting(title) {
+            if (title.includes('LONDON') || title.includes('ENGLAND') || title.includes('BRITISH')) return 'England';
+            if (title.includes('PARIS') || title.includes('FRANCE')) return 'France';
+            if (title.includes('AMERICA') || title.includes('NEW YORK')) return 'America';
+            if (title.includes('WAR')) return 'Times and places of conflict';
+            if (title.includes('FUTURE') || title.includes('SPACE')) return 'Future or imaginary worlds';
+            return 'Various meaningful locations that shape the story';
         }
 
         function showClues() {
@@ -380,7 +667,6 @@
                 gameOver = true;
                 endGame(true);
             } else {
-                // Always reveal a new clue after a wrong guess
                 cluesShown = Math.min(6, cluesShown + 1);
                 showClues();
                 
@@ -391,6 +677,7 @@
             }
             
             displayGuesses();
+            saveGameState();
         }
 
         function displayGuesses() {
@@ -432,19 +719,121 @@
             }
         }
 
+        function saveGameState() {
+            const dateKey = getDateKey(selectedDate || new Date());
+            gameHistory[dateKey] = {
+                guesses: guesses,
+                cluesShown: cluesShown,
+                gameOver: gameOver,
+                won: gameOver && guesses.some(g => g.correct),
+                book: currentBook
+            };
+            saveGameHistory();
+        }
+
+        function loadGameState() {
+            const dateKey = getDateKey(selectedDate || new Date());
+            const savedGame = gameHistory[dateKey];
+            
+            if (savedGame) {
+                guesses = savedGame.guesses || [];
+                cluesShown = savedGame.cluesShown || 1;
+                gameOver = savedGame.gameOver || false;
+                
+                displayGuesses();
+                if (gameOver) {
+                    endGame(savedGame.won);
+                }
+            } else {
+                guesses = [];
+                cluesShown = 1;
+                gameOver = false;
+            }
+        }
+
+        function showArchiveList() {
+            document.getElementById('game-section').classList.add('hidden');
+            document.getElementById('archive-section').classList.remove('hidden');
+            
+            const archiveList = document.getElementById('archive-list');
+            archiveList.innerHTML = '';
+            
+            const today = new Date();
+            
+            // Show last 30 days
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                
+                const dateKey = getDateKey(date);
+                const dayData = gameHistory[dateKey];
+                const isToday = dateKey === getDateKey(new Date());
+                
+                const dayDiv = document.createElement('div');
+                dayDiv.className = `archive-day ${dayData && dayData.won ? 'completed' : ''} ${isToday ? 'current' : ''}`;
+                
+                const statusIcon = dayData && dayData.won ? '✅' : dayData && dayData.gameOver ? '❌' : '⏳';
+                
+                // Only show book title if completed or today
+                let bookInfo = '';
+                if (dayData && dayData.gameOver) {
+                    const bookForDay = dayData.book || getTodaysBook(date);
+                    bookInfo = `<div class="archive-book">${bookForDay.title} by ${bookForDay.author}</div>`;
+                } else if (isToday) {
+                    bookInfo = `<div class="archive-book">Today's puzzle</div>`;
+                } else {
+                    bookInfo = `<div class="archive-book">Click to play</div>`;
+                }
+                
+                dayDiv.innerHTML = `
+                    <div class="archive-info">
+                        <div class="archive-date">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${isToday ? '(Today)' : ''}</div>
+                        ${bookInfo}
+                    </div>
+                    <div class="archive-status">${statusIcon}</div>
+                `;
+                
+                dayDiv.onclick = () => playArchiveDay(date);
+                archiveList.appendChild(dayDiv);
+            }
+        }
+
+        function showTodaysGame() {
+            selectedDate = null;
+            document.getElementById('archive-section').classList.add('hidden');
+            document.getElementById('game-section').classList.remove('hidden');
+            initGame();
+        }
+
+        function playArchiveDay(date) {
+            selectedDate = date;
+            document.getElementById('archive-section').classList.add('hidden');
+            document.getElementById('game-section').classList.remove('hidden');
+            initGame();
+        }
+
+        function resetGameUI() {
+            document.getElementById('guesses-section').classList.add('hidden');
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('input-section').classList.remove('hidden');
+            document.getElementById('guess-input').value = '';
+        }
+
+        function initGame() {
+            loadGameHistory();
+            currentBook = getTodaysBook();
+            showCurrentDate();
+            resetGameUI();
+            loadGameState();
+            showClues();
+        }
+
         // Handle Enter key in input
         document.getElementById('guess-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 makeGuess();
             }
         });
-
-        // Initialize the game
-        function initGame() {
-            currentBook = getTodaysBook();
-            showCurrentDate();
-            showClues();
-        }
 
         // Start the game when page loads
         initGame();
