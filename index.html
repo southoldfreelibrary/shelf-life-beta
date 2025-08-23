@@ -5,28 +5,125 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shelf Life | Southold Free Library</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cooper+Black&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cooper+Black&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap');
         
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', Arial, sans-serif;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
             background: #f5f5f5;
+            transition: all 0.3s ease;
+        }
+        
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #e5e5e5;
+        }
+        
+        .dark-mode .container {
+            background: #2d2d2d;
+            color: #e5e5e5;
+        }
+        
+        .dark-mode .clue {
+            background: #374151;
+            border-left-color: #60a5fa;
+        }
+        
+        .dark-mode .stats-container {
+            background: #374151;
+            border-color: #4b5563;
+            color: #e5e5e5;
+        }
+        
+        .dark-mode input[type="text"] {
+            background: #374151;
+            border-color: #4b5563;
+            color: #e5e5e5;
+        }
+        
+        .dark-mode input[type="text"]::placeholder {
+            color: #9ca3af;
+        }
+        
+        .dark-mode h3 {
+            color: #e5e5e5;
+        }
+        
+        .dark-mode .subtitle {
+            color: #9ca3af;
+        }
+        
+        .dark-mode .date {
+            color: #6b7280;
+        }
+        
+        .dark-mode .library-link {
+            background: #374151;
+            border: 1px solid #4b5563;
+        }
+        
+        .dark-mode .achievement {
+            background: #374151;
+            border-color: #6b7280;
+            color: #e5e5e5;
+        }
+        
+        .mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #e5e7eb;
+            border: 2px solid #d1d5db;
+            border-radius: 20px;
+            width: 60px;
+            height: 30px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+        
+        .mode-toggle::before {
+            content: '';
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .dark-mode .mode-toggle {
+            background: #374151;
+            border-color: #4b5563;
+        }
+        
+        .dark-mode .mode-toggle::before {
+            transform: translateX(30px);
+            background: #1f2937;
         }
         
         /* Landing Page Styles */
         .landing-page {
             background: linear-gradient(135deg, #4fc3f7, #29b6f6);
             min-height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             color: white;
-            margin: -20px;
             padding: 20px;
+            box-sizing: border-box;
         }
         
         .landing-title {
@@ -37,11 +134,13 @@
         }
         
         .landing-subtitle {
+            font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             margin-bottom: 40px;
             max-width: 500px;
             line-height: 1.4;
             opacity: 0.95;
+            font-style: italic;
         }
         
         .play-button {
@@ -95,6 +194,8 @@
             text-align: center;
             color: #666;
             margin-bottom: 5px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
         }
         
         .date {
@@ -128,6 +229,12 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #1f2937;
         }
         
         .correct {
@@ -320,6 +427,7 @@
 <body>
     <!-- Landing Page -->
     <div id="landing-page" class="landing-page">
+        <div class="mode-toggle" onclick="toggleDarkMode()"></div>
         <h1 class="landing-title">Shelf Life</h1>
         <p class="landing-subtitle">Discover the book title based on simple clues.</p>
         <button class="play-button" onclick="startGame()">play now</button>
@@ -328,6 +436,7 @@
 
     <!-- Game Container -->
     <div id="game-container" class="game-container">
+        <div class="mode-toggle" onclick="toggleDarkMode()"></div>
         <button class="back-button" onclick="showLanding()">← Home</button>
         
         <h1>📚 Shelf Life</h1>
@@ -374,7 +483,7 @@
             <div class="container hidden" id="result-section">
                 <div id="result-text"></div>
                 <div style="text-align: center; margin: 15px 0;">
-                    <button class="share-button" onclick="shareResults()">📋 Share Results</button>
+                    <button class="share-button" onclick="shareResults()">📋 Copy Results</button>
                 </div>
                 <div class="library-link">
                     <p>📖 <strong>Available at Southold Free Library</strong></p>
@@ -982,6 +1091,23 @@
             document.getElementById('achievement-display').appendChild(achievementEl);
         }
 
+        // Dark mode functionality
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            
+            // Save preference
+            localStorage.setItem('dark-mode', isDarkMode);
+        }
+
+        // Load dark mode preference
+        function loadDarkModePreference() {
+            const isDarkMode = localStorage.getItem('dark-mode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+        }
+
         function shareResults() {
             const dateKey = getDateKey(selectedDate || new Date());
             const gameData = gameHistory[dateKey];
@@ -999,11 +1125,19 @@
             }
             
             const result = gameData.won ? `${guessEmojis.length}/6` : 'X/6';
-            const shareText = `Shelf Life #${dayNumber} ${result}\n\n${guessEmojis.join('')}\n\nPlay at: ${window.location.href}`;
+            const shareText = `📚 Shelf Life #${dayNumber} ${result}\n\n${guessEmojis.join('')}\n\n🔥 Current streak: ${playerStats.streak}\n\nPlay at: ${window.location.href}`;
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(shareText).then(() => {
-                    alert('Results copied to clipboard!');
+                    // Show success message
+                    const button = event.target;
+                    const originalText = button.textContent;
+                    button.textContent = '✅ Copied!';
+                    button.style.background = '#10b981';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = '#10b981';
+                    }, 2000);
                 });
             } else {
                 prompt('Copy this text to share:', shareText);
@@ -1127,6 +1261,15 @@
             document.getElementById('input-section').classList.remove('hidden');
             document.getElementById('guess-input').value = '';
             document.getElementById('achievement-display').innerHTML = '';
+            
+            // Aggressively remove any lingering lightbulb text
+            const inputSection = document.getElementById('input-section');
+            const paragraphs = inputSection.querySelectorAll('p');
+            paragraphs.forEach(p => {
+                if (p.textContent.includes('💡') || p.textContent.includes('Skipping') || p.textContent.includes('clue')) {
+                    p.remove();
+                }
+            });
         }
 
         function initGame() {
@@ -1154,6 +1297,7 @@
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             loadGameHistory();
+            loadDarkModePreference();
             
             // Add Enter key support
             document.getElementById('guess-input').addEventListener('keypress', function(e) {
