@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shelf Life | Southold Free Library</title>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cooper+Black&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
         
         body {
             font-family: 'Poppins', Arial, sans-serif;
@@ -13,165 +18,114 @@
             margin: 0 auto;
             padding: 20px;
             background: #f5f5f5;
-            transition: all 0.3s ease;
+            min-height: 100vh;
         }
         
-        /* Dark Mode Styles */
-        body.dark-mode {
-            background: #1a1a1a;
-            color: #e5e5e5;
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, rgba(139, 195, 74, 0.05), rgba(52, 152, 219, 0.05));
+            border: 1px solid rgba(52, 152, 219, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .dark-mode .container {
-            background: #2d2d2d;
-            color: #e5e5e5;
-        }
-        
-        .dark-mode .clue {
-            background: #374151;
-            border-left-color: #60a5fa;
-        }
-        
-        .dark-mode .stats-container {
-            background: #374151;
-            border-color: #4b5563;
-            color: #e5e5e5;
-        }
-        
-        .dark-mode input[type="text"] {
-            background: #374151;
-            border-color: #4b5563;
-            color: #e5e5e5;
-        }
-        
-        .dark-mode input[type="text"]::placeholder {
-            color: #9ca3af;
-        }
-        
-        .dark-mode h3 {
-            color: #e5e5e5;
-        }
-        
-        .dark-mode .subtitle {
-            color: #9ca3af;
-        }
-        
-        .dark-mode .date {
-            color: #6b7280;
-        }
-        
-        .dark-mode .library-link {
-            background: #374151;
-            border: 1px solid #4b5563;
-        }
-        
-        .dark-mode .achievement {
-            background: #374151;
-            border-color: #6b7280;
-            color: #e5e5e5;
-        }
-        
-        .mode-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #e5e7eb;
-            border: 2px solid #d1d5db;
-            border-radius: 20px;
-            width: 60px;
-            height: 30px;
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s ease;
+        h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.8rem;
+            font-weight: 300;
+            background: linear-gradient(135deg, #8bc34a, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 10px 0;
             display: flex;
             align-items: center;
-            padding: 2px;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: -0.02em;
         }
         
-        .mode-toggle::before {
+        .logo {
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+            position: relative;
+            flex-shrink: 0;
+            margin-right: 5px;
+        }
+        
+        .logo::before {
             content: '';
-            width: 22px;
-            height: 22px;
-            background: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .dark-mode .mode-toggle {
-            background: #374151;
-            border-color: #4b5563;
-        }
-        
-        .dark-mode .mode-toggle::before {
-            transform: translateX(30px);
-            background: #1f2937;
-        }
-        
-        /* Landing Page Styles */
-        .landing-page {
-            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
-            min-height: 100vh;
-            width: 100vw;
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-            padding: 20px;
-            box-sizing: border-box;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8bc34a 0%, #8bc34a 45%, #3498db 55%, #3498db 100%);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
         
-        .landing-title {
-            font-family: 'Cooper Black', Arial, sans-serif;
-            font-size: 4rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        
-        .landing-subtitle {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 40px;
-            max-width: 500px;
-            line-height: 1.4;
-            opacity: 0.95;
-            font-style: italic;
-        }
-        
-        .play-button {
-            background: #8bc34a;
-            color: white;
-            border: none;
-            padding: 20px 40px;
-            font-size: 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-        
-        .play-button:hover {
-            background: #7cb342;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-        
-        .landing-footer {
+        .logo::after {
+            content: '';
             position: absolute;
-            bottom: 20px;
-            font-size: 0.9rem;
-            opacity: 0.8;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 34px;
+            height: 28px;
+            background: white;
+            border-radius: 2px;
+            clip-path: polygon(
+                0% 100%, 
+                0% 15%, 
+                3% 12%, 
+                8% 15%, 
+                15% 10%, 
+                22% 15%, 
+                28% 8%, 
+                35% 12%, 
+                42% 5%, 
+                50% 0%, 
+                58% 5%, 
+                65% 12%, 
+                72% 8%, 
+                78% 15%, 
+                85% 10%, 
+                92% 15%, 
+                97% 12%, 
+                100% 15%, 
+                100% 100%
+            );
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
         }
         
-        /* Game Styles */
-        .game-container {
-            display: none;
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: #666;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        
+        .date-info {
+            background: linear-gradient(135deg, rgba(139, 195, 74, 0.1), rgba(52, 152, 219, 0.1));
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .game-number {
+            font-weight: 600;
+            background: linear-gradient(135deg, #8bc34a, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.1rem;
         }
         
         .container {
@@ -182,34 +136,29 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        h1 {
+        .stats-container {
+            background: white;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin: 15px 0;
             text-align: center;
-            color: #2563eb;
-            margin-bottom: 5px;
-            font-family: 'Cooper Black', Arial, sans-serif;
-            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: inline-block;
         }
         
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 5px;
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-        }
-        
-        .date {
-            text-align: center;
-            color: #999;
-            font-size: 14px;
-            margin-bottom: 20px;
+        .streak-display {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
         }
         
         .clue {
-            background: #dbeafe;
+            background: linear-gradient(135deg, rgba(139, 195, 74, 0.08), rgba(52, 152, 219, 0.08));
+            border: 1px solid rgba(52, 152, 219, 0.2);
             padding: 15px;
             margin: 10px 0;
-            border-left: 4px solid #2563eb;
+            border-left: 4px solid #3498db;
             border-radius: 5px;
             animation: slideIn 0.4s ease-out;
         }
@@ -220,10 +169,11 @@
         }
         
         .guess {
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
             animation: fadeIn 0.3s ease-in;
+            font-weight: 500;
         }
         
         @keyframes fadeIn {
@@ -231,109 +181,144 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        h3 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            color: #1f2937;
-        }
-        
         .correct {
-            background: #dcfce7;
-            border: 1px solid #16a34a;
+            background: linear-gradient(135deg, rgba(139, 195, 74, 0.15), rgba(139, 195, 74, 0.1));
+            border: 2px solid #8bc34a;
+            color: #2e7d32;
         }
         
         .incorrect {
             background: #fef2f2;
-            border: 1px solid #dc2626;
+            border: 2px solid #dc2626;
+            color: #991b1b;
+        }
+        
+        .skipped {
+            background: #f3f4f6;
+            border: 2px solid #d1d5db;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.2s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #8bc34a, #3498db);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, #7cb342, #2980b9);
+            transform: translateY(-1px);
+        }
+        
+        .skip-btn {
+            background: #6b7280;
+        }
+        
+        .skip-btn:hover {
+            background: #4b5563;
+        }
+        
+        .submit-btn {
+            min-width: 80px;
+            font-size: 18px;
         }
         
         .result {
             text-align: center;
-            padding: 20px;
-            border-radius: 5px;
+            padding: 25px;
+            border-radius: 10px;
             margin: 20px 0;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
         
         .win {
             background: #dcfce7;
             color: #166534;
+            border: 2px solid #16a34a;
         }
         
         .lose {
             background: #fef2f2;
             color: #991b1b;
+            border: 2px solid #dc2626;
         }
         
         .share-button {
             background: #10b981;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
             margin: 10px;
-            transition: all 0.2s ease;
         }
         
         .share-button:hover {
             background: #059669;
-            transform: translateY(-1px);
         }
         
-        .stats-container {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 10px 15px;
-            margin: 10px 0;
+        .library-link {
+            background: white;
+            border: 2px solid #2563eb;
+            padding: 20px;
             text-align: center;
-            display: inline-block;
-            margin-left: auto;
-            margin-right: auto;
+            border-radius: 10px;
+            margin: 20px 0;
         }
         
-        .stats-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            font-weight: 500;
-        }
-        
-        .stat-icon {
-            font-size: 18px;
-        }
-        
-        .stat-value {
-            color: #1f2937;
-        }
-        
-        .streak-badge {
-            display: inline-block;
-            background: #ff6b35;
+        .library-link a {
+            background: linear-gradient(135deg, #8bc34a, #3498db);
             color: white;
-            padding: 4px 8px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 10px;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        
+        .library-link a:hover {
+            background: linear-gradient(135deg, #7cb342, #2980b9);
+            transform: translateY(-1px);
         }
         
         .achievement {
             background: #fef3c7;
-            border: 1px solid #f59e0b;
+            border: 2px solid #f59e0b;
             border-radius: 8px;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 15px;
+            margin: 15px 0;
             text-align: center;
             animation: bounceIn 0.6s ease-out;
+            color: #92400e;
+            font-weight: 600;
         }
         
         @keyframes bounceIn {
@@ -342,204 +327,182 @@
             100% { transform: scale(1); opacity: 1; }
         }
         
-        input[type="text"] {
-            width: 70%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        
-        button {
-            padding: 10px 20px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        
-        button:hover {
-            background: #1d4ed8;
-        }
-        
-        .library-link {
-            background: #dbeafe;
-            padding: 15px;
+        .nav-buttons {
             text-align: center;
-            border-radius: 5px;
-            margin: 15px 0;
+            margin: 20px 0;
         }
         
-        .library-link a {
-            background: #2563eb;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
+        .nav-buttons button {
+            margin: 0 10px 10px 10px;
         }
         
         .hidden {
             display: none;
         }
         
-        .nav-buttons {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .nav-buttons button {
-            margin: 0 5px;
-        }
-        
-        .back-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 25px;
+        /* Archive styles */
+        .archive-day {
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .back-button:hover {
-            background: rgba(255,255,255,0.3);
+        .archive-day:hover {
+            border-color: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
+        .archive-day.completed {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        
+        .archive-day.current {
+            border-color: #2563eb;
+            background: #eff6ff;
+            font-weight: 600;
+        }
+        
+        .archive-info h4 {
+            margin: 0 0 5px 0;
+            color: #1f2937;
+        }
+        
+        .archive-book {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        .archive-status {
+            font-size: 1.5rem;
+        }
+        
+        /* Responsive design */
         @media (max-width: 600px) {
-            .landing-title {
-                font-size: 3rem;
+            body {
+                padding: 10px;
             }
-            .landing-subtitle {
-                font-size: 1.2rem;
+            
+            h1 {
+                font-size: 2rem;
             }
-            .play-button {
-                padding: 15px 30px;
-                font-size: 1.3rem;
+            
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
             }
+            
+            .input-group input {
+                width: 100%;
+            }
+            
+            .nav-buttons button {
+                display: block;
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+        
+        /* Loading spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Landing Page -->
-    <div id="landing-page" class="landing-page">
-        <div class="mode-toggle" onclick="toggleDarkMode()"></div>
-        <h1 class="landing-title">Shelf Life</h1>
-        <p class="landing-subtitle">Discover the book title based on simple clues.</p>
-        <button class="play-button" onclick="startGame()">play now</button>
-        <div class="landing-footer">designed by anakin jackson for southold free library</div>
-    </div>
-
-    <!-- Game Container -->
-    <div id="game-container" class="game-container">
-        <div class="mode-toggle" onclick="toggleDarkMode()"></div>
-        <button class="back-button" onclick="showLanding()">← Home</button>
-        
-        <h1>📚 Shelf Life</h1>
+    <div class="header">
+        <h1>Shelf Life</h1>
         <p class="subtitle">Daily Book Guessing Game</p>
-        <p class="date" id="current-date"></p>
-
-        <div style="text-align: center;">
-            <div class="stats-container">
-                <div class="stats-row">
-                    <div class="stat-item">
-                        <span class="stat-icon">🔥</span>
-                        <span class="stat-value" id="streak-display">0 day streak</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="nav-buttons">
-            <button onclick="showTodaysGame()" id="today-btn">📅 Today's Game</button>
-            <button onclick="showArchiveList()" id="archive-btn">🗂️ Archive</button>
-        </div>
-
-        <div id="game-section">
-            <div class="container">
-                <h3>📋 Clues (<span id="clue-count">1</span>/6)</h3>
-                <div id="clues"></div>
-            </div>
-
-            <div class="container" id="input-section">
-                <h3>Your Guess</h3>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <input type="text" id="guess-input" placeholder="Enter book title..." style="width: 60%;">
-                    <button onclick="makeGuess()" style="width: 50px; font-size: 18px;">→</button>
-                    <button onclick="skipClue()" style="background: #6b7280; width: auto; padding: 10px 15px; font-size: 14px;">Skip</button>
-                </div>
-                <p style="font-size: 12px; color: #666; margin-top: 5px; margin-bottom: 0;">💡 Skipping reveals the next clue but counts as one of your 6 guesses</p>
-            </div>
-
-            <div class="container hidden" id="guesses-section">
-                <h3>Your Guesses (<span id="guess-count">0</span>/6)</h3>
-                <div id="guesses"></div>
-            </div>
-
-            <div class="container hidden" id="result-section">
-                <div id="result-text"></div>
-                <div style="text-align: center; margin: 15px 0;">
-                    <button class="share-button" onclick="shareResults()">📋 Copy Results</button>
-                </div>
-                <div class="library-link">
-                    <p>📖 <strong>Available at Southold Free Library</strong></p>
-                    <a href="https://southold-suffc.na.iiivega.com" target="_blank">Search Our Catalog</a>
-                </div>
-                <div id="achievement-display"></div>
-            </div>
-        </div>
-
-        <div class="container hidden" id="archive-section">
-            <h3>🗂️ Game Archive</h3>
-            <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Click any day to play that puzzle</p>
-            <div id="archive-list" style="max-height: 400px; overflow-y: auto;"></div>
-        </div>
-
-        <div style="text-align: center; margin-top: 30px; padding: 20px; color: #666; font-size: 14px;">
-            <p>Powered by <a href="https://southoldlibrary.org" target="_blank" style="color: #2563eb; text-decoration: none;">Southold Free Library</a></p>
-            <p style="font-size: 12px; margin-top: 10px;">© 2025 Southold Free Library. All rights reserved.</p>
+        <div class="date-info">
+            <div class="game-number" id="game-number">Loading...</div>
+            <div id="current-date"></div>
         </div>
     </div>
+
+    <div style="text-align: center;">
+        <div class="stats-container">
+            <div class="streak-display">
+                🔥 <span id="streak-count">0</span> day streak
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button onclick="showTodaysGame()">📅 Today's Game</button>
+        <button onclick="showArchiveList()">🗂️ Archive</button>
+    </div>
+
+    <div id="game-section">
+        <div class="container">
+            <h3>📋 Clues (<span id="clue-count">1</span>/6)</h3>
+            <div id="clues"></div>
+        </div>
+
+        <div class="container" id="input-section">
+            <h3>Your Guess</h3>
+            <div class="input-group">
+                <input type="text" id="guess-input" placeholder="Enter book title...">
+                <button class="submit-btn" onclick="makeGuess()">Submit</button>
+                <button class="skip-btn" onclick="skipClue()">Skip</button>
+            </div>
+        </div>
+
+        <div class="container hidden" id="guesses-section">
+            <h3>Your Guesses (<span id="guess-count">0</span>/6)</h3>
+            <div id="guesses"></div>
+        </div>
+
+        <div class="container hidden" id="result-section">
+            <div id="result-text"></div>
+            <div style="text-align: center;">
+                <button class="share-button" onclick="shareResults()">📋 Copy Results</button>
+            </div>
+            <div class="library-link">
+                <p><strong>📖 Find this book at Southold Free Library</strong></p>
+                <a href="#" id="catalog-link" target="_blank">Search Our Catalog</a>
+            </div>
+            <div id="achievement-display"></div>
+        </div>
+    </div>
+
+    <div class="container hidden" id="archive-section">
+        <h3>🗂️ Game Archive</h3>
+        <p style="color: #6b7280; margin-bottom: 20px;">Click any day to play that puzzle</p>
+        <div id="archive-list"></div>
+    </div>
+
+    <!-- Audio elements for sound effects -->
+    <audio id="correct-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmI=" type="audio/wav">
+    </audio>
+    <audio id="incorrect-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRhoCAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YfYBAAC4u7i4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4" type="audio/wav">
+    </audio>
+    <audio id="win-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRhwCAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YfgBAADf4Nyc3ODUoNvg2aDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZoNvg2qDb4Nqg2+DZ" type="audio/wav">
+    </audio>
 
     <script>
-        // Book database
-        const books = [
-            { title: "PRIDE AND PREJUDICE", author: "Jane Austen" },
-            { title: "THE GREAT GATSBY", author: "F. Scott Fitzgerald" },
-            { title: "TO KILL A MOCKINGBIRD", author: "Harper Lee" },
-            { title: "HARRY POTTER AND THE SORCERER'S STONE", author: "J.K. Rowling" },
-            { title: "NINETEEN EIGHTY-FOUR", author: "George Orwell" },
-            { title: "THE HOBBIT", author: "J.R.R. Tolkien" },
-            { title: "JANE EYRE", author: "Charlotte Brontë" },
-            { title: "THE CATCHER IN THE RYE", author: "J.D. Salinger" },
-            { title: "MOBY DICK", author: "Herman Melville" },
-            { title: "WAR AND PEACE", author: "Leo Tolstoy" },
-            { title: "THE LORD OF THE RINGS", author: "J.R.R. Tolkien" },
-            { title: "BRAVE NEW WORLD", author: "Aldous Huxley" },
-            { title: "WUTHERING HEIGHTS", author: "Emily Brontë" },
-            { title: "THE SCARLET LETTER", author: "Nathaniel Hawthorne" },
-            { title: "LITTLE WOMEN", author: "Louisa May Alcott" },
-            { title: "FRANKENSTEIN", author: "Mary Shelley" },
-            { title: "DRACULA", author: "Bram Stoker" },
-            { title: "ALICE'S ADVENTURES IN WONDERLAND", author: "Lewis Carroll" },
-            { title: "THE ADVENTURES OF HUCKLEBERRY FINN", author: "Mark Twain" },
-            { title: "CRIME AND PUNISHMENT", author: "Fyodor Dostoyevsky" },
-            { title: "THE COUNT OF MONTE CRISTO", author: "Alexandre Dumas" },
-            { title: "ANNA KARENINA", author: "Leo Tolstoy" },
-            { title: "THE PICTURE OF DORIAN GRAY", author: "Oscar Wilde" },
-            { title: "GREAT EXPECTATIONS", author: "Charles Dickens" },
-            { title: "A TALE OF TWO CITIES", author: "Charles Dickens" },
-            { title: "THE GRAPES OF WRATH", author: "John Steinbeck" },
-            { title: "OF MICE AND MEN", author: "John Steinbeck" },
-            { title: "FAHRENHEIT 451", author: "Ray Bradbury" },
-            { title: "LORD OF THE FLIES", author: "William Golding" },
-            { title: "THE OLD MAN AND THE SEA", author: "Ernest Hemingway" }
-        ];
-
         // Game state
         let currentBook;
         let guesses = [];
@@ -547,20 +510,90 @@
         let gameOver = false;
         let selectedDate = null;
         let gameHistory = {};
-        let playerStats = {
-            streak: 0,
-            gamesPlayed: 0,
-            gamesWon: 0,
-            achievements: []
-        };
+        let playerStats = { streak: 0, gamesPlayed: 0, gamesWon: 0, achievements: [] };
+        let books = [];
 
-        // Achievements
-        const achievements = [
-            { id: "first_win", name: "First Victory", description: "Win your first game", emoji: "🎉" },
-            { id: "streak_3", name: "Hot Streak", description: "Win 3 days in a row", emoji: "🔥" },
-            { id: "perfect_game", name: "Perfect Game", description: "Win with only 1 guess", emoji: "💎" },
-            { id: "bookworm", name: "Bookworm", description: "Play 25 games", emoji: "📚" }
+        // Google Sheets configuration
+        const SHEET_ID = 'YOUR_SHEET_ID_HERE'; // Replace with your Google Sheet ID
+        const SHEET_NAME = 'Books'; // Name of your sheet tab
+        const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your Google Sheets API key
+
+        // Default books (fallback if Google Sheets fails)
+        const defaultBooks = [
+            { title: "PRIDE AND PREJUDICE", author: "Jane Austen", isbn: "9780141439518" },
+            { title: "THE GREAT GATSBY", author: "F. Scott Fitzgerald", isbn: "9780743273565" },
+            { title: "TO KILL A MOCKINGBIRD", author: "Harper Lee", isbn: "9780061120084" },
+            { title: "HARRY POTTER AND THE SORCERER'S STONE", author: "J.K. Rowling", isbn: "9780439708180" },
+            { title: "NINETEEN EIGHTY-FOUR", author: "George Orwell", isbn: "9780451524935" }
         ];
+
+        // Initialize with default books
+        books = [...defaultBooks];
+
+        // Sound effects
+        function playSound(type) {
+            try {
+                const sound = document.getElementById(`${type}-sound`);
+                if (sound) {
+                    sound.currentTime = 0;
+                    sound.play().catch(() => {
+                        // Audio play failed, ignore silently
+                    });
+                }
+            } catch (e) {
+                // Ignore audio errors
+            }
+        }
+
+        // Google Sheets Integration
+        async function loadBooksFromSheet() {
+            if (!SHEET_ID || !API_KEY || SHEET_ID === 'YOUR_SHEET_ID_HERE') {
+                console.log('Using default books - Google Sheets not configured');
+                return defaultBooks;
+            }
+
+            try {
+                const response = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`
+                );
+                
+                if (!response.ok) throw new Error('Failed to fetch from Google Sheets');
+                
+                const data = await response.json();
+                const rows = data.values;
+                
+                if (!rows || rows.length <= 1) throw new Error('No data found');
+                
+                const booksFromSheet = rows.slice(1).map(row => ({
+                    title: (row[0] || '').toUpperCase().trim(),
+                    author: (row[1] || '').trim(),
+                    isbn: (row[2] || '').trim(),
+                    clue1: (row[3] || '').trim(),
+                    clue2: (row[4] || '').trim(),
+                    clue3: (row[5] || '').trim(),
+                    clue4: (row[6] || '').trim(),
+                    clue5: (row[7] || '').trim(),
+                    clue6: (row[8] || '').trim()
+                })).filter(book => book.title && book.author);
+                
+                console.log(`Loaded ${booksFromSheet.length} books from Google Sheets`);
+                return booksFromSheet.length > 0 ? booksFromSheet : defaultBooks;
+                
+            } catch (error) {
+                console.error('Error loading from Google Sheets:', error);
+                return defaultBooks;
+            }
+        }
+
+        async function refreshFromSheet() {
+            // Function removed - refresh button no longer available
+        }
+
+        // Initialize books on page load
+        loadBooksFromSheet().then(loadedBooks => {
+            books = loadedBooks;
+            initGame();
+        });
 
         // Utility functions
         function normalizeForComparison(title) {
@@ -572,24 +605,11 @@
                 .replace(/^(THE|A|AN)\s+/g, '')
                 .replace(/\bNINETEEN EIGHTY FOUR\b/g, '1984')
                 .replace(/\bNINETEEN EIGHTY THREE\b/g, '1983')
-                .replace(/\bNINETEEN EIGHTY TWO\b/g, '1982')
-                .replace(/\bNINETEEN EIGHTY ONE\b/g, '1981')
-                .replace(/\bTWENTY TWENTY FOUR\b/g, '2024')
-                .replace(/\bTWENTY TWENTY THREE\b/g, '2023')
-                .replace(/\bTWENTY TWENTY TWO\b/g, '2022')
-                .replace(/\bTWENTY TWENTY ONE\b/g, '2021')
-                .replace(/\bTWENTY TWENTY\b/g, '2020')
                 .replace(/\bTWO THOUSAND\b/g, '2000')
-                .replace(/\bONE\b/g, '1')
-                .replace(/\bTWO\b/g, '2')
-                .replace(/\bTHREE\b/g, '3')
-                .replace(/\bFOUR\b/g, '4')
-                .replace(/\bFIVE\b/g, '5')
-                .replace(/\bSIX\b/g, '6')
-                .replace(/\bSEVEN\b/g, '7')
-                .replace(/\bEIGHT\b/g, '8')
-                .replace(/\bNINE\b/g, '9')
-                .replace(/\bTEN\b/g, '10')
+                .replace(/\bONE\b/g, '1').replace(/\bTWO\b/g, '2').replace(/\bTHREE\b/g, '3')
+                .replace(/\bFOUR\b/g, '4').replace(/\bFIVE\b/g, '5').replace(/\bSIX\b/g, '6')
+                .replace(/\bSEVEN\b/g, '7').replace(/\bEIGHT\b/g, '8').replace(/\bNINE\b/g, '9')
+                .replace(/\bTEN\b/g, '10').replace(/\bTWENTY\b/g, '20').replace(/\bTHIRTY\b/g, '30')
                 .trim();
         }
 
@@ -601,22 +621,43 @@
             return date.toISOString().split('T')[0];
         }
 
+        // Enhanced daily book selection with time-based rotation
         function getTodaysBook(date = null) {
             const targetDate = date || selectedDate || new Date();
-            const year = targetDate.getFullYear();
-            const dayOfYear = Math.floor((targetDate - new Date(year, 0, 0)) / 86400000);
-            const seed = year * 1000 + dayOfYear;
-            const bookIndex = seed % books.length;
+            const startDate = new Date('2025-01-01'); // Match the game numbering start date
+            const daysSinceStart = Math.floor((targetDate - startDate) / (24 * 60 * 60 * 1000));
+            const bookIndex = Math.max(0, daysSinceStart) % books.length;
             return books[bookIndex];
+        }
+
+        function getDayNumber(date = null) {
+            const targetDate = date || selectedDate || new Date();
+            const startDate = new Date('2025-01-01'); // Start from Jan 1, 2025
+            const daysSinceStart = Math.floor((targetDate - startDate) / (24 * 60 * 60 * 1000));
+            return Math.max(1, daysSinceStart + 1); // Ensure it starts at 001
         }
 
         function showCurrentDate() {
             const targetDate = selectedDate || new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('current-date').textContent = targetDate.toLocaleDateString('en-US', options);
+            document.getElementById('game-number').textContent = `Game #${getDayNumber(targetDate).toString().padStart(3, '0')}`;
         }
 
         function generateClues(book) {
+            // Use custom clues from Google Sheets if available
+            if (book.clue1) {
+                return [
+                    book.clue1 || '🌟 A compelling story that has captivated readers',
+                    book.clue2 || `👤 Author: ${book.author.split(' ').slice(-1)[0]}`,
+                    book.clue3 || '📅 Era: Classic literature',
+                    book.clue4 || '🎭 Themes: Human nature and society',
+                    book.clue5 || '📖 Setting: Various meaningful locations',
+                    book.clue6 || '👥 Features: Memorable characters'
+                ].filter(clue => clue.trim());
+            }
+
+            // Default clue templates
             const specificClues = {
                 "PRIDE AND PREJUDICE": [
                     "🌟 A spirited woman and proud gentleman overcome first judgments to find love",
@@ -862,44 +903,12 @@
             
             return specificClues[book.title] || [
                 "🌟 A compelling story that has captivated readers for generations",
-                `👤 Author: ${getAuthorNationality(book.author)}, ${book.author.split(' ').slice(-1)[0]}`,
-                `📅 Era: ${getEstimatedYear(book.title)}`,
-                `🎭 Themes: ${getGenericThemes(book.title)}`,
-                `📖 Setting: ${getGenericSetting(book.title)}`,
-                "👥 Features: Memorable characters facing profound challenges"
+                `👤 Author: ${book.author.split(' ').slice(-1)[0]}`,
+                "📅 Era: Classic literature",
+                "🎭 Themes: Human nature and society",
+                "📖 Setting: Various meaningful locations",
+                "👥 Features: Memorable characters"
             ];
-        }
-
-        function getAuthorNationality(author) {
-            if (author.includes('Dickens') || author.includes('Austen') || author.includes('Brontë') || author.includes('Carroll') || author.includes('Tolkien')) return 'British author';
-            if (author.includes('Twain') || author.includes('Hemingway') || author.includes('Steinbeck') || author.includes('Fitzgerald')) return 'American author';
-            if (author.includes('Tolstoy') || author.includes('Dostoyevsky')) return 'Russian author';
-            if (author.includes('Hugo') || author.includes('Dumas')) return 'French author';
-            return 'International author';
-        }
-
-        function getEstimatedYear(title) {
-            if (title.includes('HARRY POTTER')) return '1990s-2000s';
-            if (title.includes('HUNGER GAMES') || title.includes('TWILIGHT')) return '2000s-2010s';
-            if (title.includes('DA VINCI') || title.includes('KITE RUNNER')) return 'Modern era';
-            return 'Classic period';
-        }
-
-        function getGenericThemes(title) {
-            if (title.includes('WAR') || title.includes('BATTLE')) return 'Conflict, courage, human cost of war';
-            if (title.includes('LOVE') || title.includes('ROMANCE')) return 'Love, relationships, passion, heartbreak';
-            if (title.includes('MURDER') || title.includes('CRIME')) return 'Mystery, justice, human nature';
-            if (title.includes('ADVENTURE')) return 'Adventure, discovery, personal growth';
-            return 'Human nature, morality, society, personal growth';
-        }
-
-        function getGenericSetting(title) {
-            if (title.includes('LONDON') || title.includes('ENGLAND') || title.includes('BRITISH')) return 'England';
-            if (title.includes('PARIS') || title.includes('FRANCE')) return 'France';
-            if (title.includes('AMERICA') || title.includes('NEW YORK')) return 'America';
-            if (title.includes('WAR')) return 'Times and places of conflict';
-            if (title.includes('FUTURE') || title.includes('SPACE')) return 'Future or imaginary worlds';
-            return 'Various meaningful locations that shape the story';
         }
 
         // Game functions
@@ -929,7 +938,22 @@
         }
 
         function updateStatsDisplay() {
-            document.getElementById('streak-display').textContent = `${playerStats.streak} day streak`;
+            document.getElementById('streak-count').textContent = playerStats.streak;
+        }
+
+        function updateCatalogLink(book) {
+            const catalogLink = document.getElementById('catalog-link');
+            if (book && book.isbn) {
+                // Try to construct a more specific search URL with ISBN
+                catalogLink.href = `https://southold-suffc.na.iiivega.com/search?query=${encodeURIComponent(book.isbn)}`;
+            } else if (book) {
+                // Fallback to title and author search
+                const searchQuery = `${book.title} ${book.author}`.replace(/[^\w\s]/g, ' ').trim();
+                catalogLink.href = `https://southold-suffc.na.iiivega.com/search?query=${encodeURIComponent(searchQuery)}`;
+            } else {
+                // Default catalog link
+                catalogLink.href = 'https://southold-suffc.na.iiivega.com';
+            }
         }
 
         function showClues() {
@@ -940,7 +964,7 @@
             for (let i = 0; i < cluesShown; i++) {
                 const clueDiv = document.createElement('div');
                 clueDiv.className = 'clue';
-                clueDiv.textContent = clues[i];
+                clueDiv.textContent = clues[i] || `Clue ${i + 1} not available`;
                 cluesContainer.appendChild(clueDiv);
             }
             
@@ -982,9 +1006,14 @@
                 playerStats.gamesWon++;
                 playerStats.streak++;
                 
+                playSound('correct');
+                setTimeout(() => playSound('win'), 500);
+                
                 checkAchievements(true);
                 endGame(true);
             } else {
+                playSound('incorrect');
+                
                 cluesShown = Math.min(6, cluesShown + 1);
                 showClues();
                 
@@ -1010,11 +1039,7 @@
             guesses.forEach(guess => {
                 const guessDiv = document.createElement('div');
                 if (guess.isSkip) {
-                    guessDiv.className = 'guess';
-                    guessDiv.style.background = '#f3f4f6';
-                    guessDiv.style.border = '1px solid #d1d5db';
-                    guessDiv.style.color = '#6b7280';
-                    guessDiv.style.fontStyle = 'italic';
+                    guessDiv.className = 'guess skipped';
                 } else {
                     guessDiv.className = `guess ${guess.correct ? 'correct' : 'incorrect'}`;
                 }
@@ -1029,20 +1054,23 @@
             document.getElementById('input-section').classList.add('hidden');
             document.getElementById('result-section').classList.remove('hidden');
             
+            // Update catalog link with current book info
+            updateCatalogLink(currentBook);
+            
             const resultDiv = document.getElementById('result-text');
             if (won) {
                 const actualGuesses = guesses.filter(g => !g.isSkip).length;
                 resultDiv.innerHTML = `
                     <div class="result win">
                         <h3>🎉 Congratulations!</h3>
-                        <p>You guessed "${currentBook.title}" by ${currentBook.author} in ${actualGuesses} guess${actualGuesses === 1 ? '' : 'es'}!</p>
+                        <p>You guessed "<strong>${currentBook.title}</strong>" by ${currentBook.author} in ${actualGuesses} guess${actualGuesses === 1 ? '' : 'es'}!</p>
                     </div>
                 `;
             } else {
                 resultDiv.innerHTML = `
                     <div class="result lose">
                         <h3>📚 Better luck next time!</h3>
-                        <p>The book was "${currentBook.title}" by ${currentBook.author}</p>
+                        <p>The book was "<strong>${currentBook.title}</strong>" by ${currentBook.author}</p>
                     </div>
                 `;
             }
@@ -1051,6 +1079,13 @@
         }
 
         function checkAchievements(won) {
+            const achievements = [
+                { id: "first_win", name: "First Victory", description: "Win your first game", emoji: "🎉" },
+                { id: "streak_3", name: "Hot Streak", description: "Win 3 days in a row", emoji: "🔥" },
+                { id: "perfect_game", name: "Perfect Game", description: "Win with only 1 guess", emoji: "💎" },
+                { id: "bookworm", name: "Bookworm", description: "Play 25 games", emoji: "📚" }
+            ];
+
             const newAchievements = [];
             
             if (won && !playerStats.achievements.includes('first_win') && playerStats.gamesWon === 1) {
@@ -1072,40 +1107,23 @@
             newAchievements.forEach(achievementId => {
                 if (!playerStats.achievements.includes(achievementId)) {
                     playerStats.achievements.push(achievementId);
-                    showAchievement(achievementId);
+                    showAchievement(achievementId, achievements);
                 }
             });
         }
 
-        function showAchievement(achievementId) {
-            const achievement = achievements.find(a => a.id === achievementId);
+        function showAchievement(achievementId, achievementsList) {
+            const achievement = achievementsList.find(a => a.id === achievementId);
             if (!achievement) return;
             
             const achievementEl = document.createElement('div');
             achievementEl.className = 'achievement';
             achievementEl.innerHTML = `
                 <strong>${achievement.emoji} ${achievement.name}</strong><br>
-                <span style="font-size: 12px;">${achievement.description}</span>
+                <span style="font-size: 14px;">${achievement.description}</span>
             `;
             
             document.getElementById('achievement-display').appendChild(achievementEl);
-        }
-
-        // Dark mode functionality
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            
-            // Save preference
-            localStorage.setItem('dark-mode', isDarkMode);
-        }
-
-        // Load dark mode preference
-        function loadDarkModePreference() {
-            const isDarkMode = localStorage.getItem('dark-mode') === 'true';
-            if (isDarkMode) {
-                document.body.classList.add('dark-mode');
-            }
         }
 
         function shareResults() {
@@ -1114,7 +1132,7 @@
             
             if (!gameData) return;
             
-            const dayNumber = Math.floor((new Date() - new Date('2024-01-01')) / 86400000) + 1;
+            const dayNumber = getDayNumber();
             const guessEmojis = gameData.guesses.map(guess => {
                 if (guess.isSkip) return '⏭️';
                 return guess.correct ? '🟩' : '🟥';
@@ -1125,11 +1143,10 @@
             }
             
             const result = gameData.won ? `${guessEmojis.length}/6` : 'X/6';
-            const shareText = `📚 Shelf Life #${dayNumber} ${result}\n\n${guessEmojis.join('')}\n\n🔥 Current streak: ${playerStats.streak}\n\nPlay at: ${window.location.href}`;
+            const shareText = `📚 Shelf Life #${dayNumber} ${result}\n\n${guessEmojis.join('')}\n\n🔥 Current streak: ${playerStats.streak}\n\nDaily book guessing game: ${window.location.href}`;
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(shareText).then(() => {
-                    // Show success message
                     const button = event.target;
                     const originalText = button.textContent;
                     button.textContent = '✅ Copied!';
@@ -1199,44 +1216,23 @@
                 const statusIcon = dayData && dayData.won ? '✅' : dayData && dayData.gameOver ? '❌' : '⏳';
                 
                 let bookInfo = '';
-                if (dayData && dayData.gameOver) {
-                    const bookForDay = dayData.book || getTodaysBook(date);
-                    bookInfo = `<div style="font-size: 12px; color: #666; margin-top: 2px;">${bookForDay.title} by ${bookForDay.author}</div>`;
+                if (dayData && dayData.gameOver && dayData.book) {
+                    bookInfo = `<p class="archive-book">${dayData.book.title} by ${dayData.book.author}</p>`;
                 } else if (isToday) {
-                    bookInfo = `<div style="font-size: 12px; color: #666; margin-top: 2px;">Today's puzzle</div>`;
+                    bookInfo = `<p class="archive-book">Today's puzzle</p>`;
                 } else {
-                    bookInfo = `<div style="font-size: 12px; color: #666; margin-top: 2px;">Click to play</div>`;
+                    bookInfo = `<p class="archive-book">Click to play</p>`;
                 }
                 
                 dayDiv.innerHTML = `
-                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                        <div style="font-weight: bold; color: #333;">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${isToday ? '(Today)' : ''}</div>
+                    <div class="archive-info">
+                        <h4>${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${isToday ? '(Today)' : ''}</h4>
                         ${bookInfo}
                     </div>
-                    <div style="font-size: 18px;">${statusIcon}</div>
+                    <div class="archive-status">${statusIcon}</div>
                 `;
                 
-                dayDiv.style.padding = '12px';
-                dayDiv.style.margin = '8px 0';
-                dayDiv.style.background = dayData && dayData.won ? '#dcfce7' : isToday ? '#dbeafe' : '#f8f9fa';
-                dayDiv.style.border = `1px solid ${dayData && dayData.won ? '#16a34a' : isToday ? '#2563eb' : '#ddd'}`;
-                dayDiv.style.borderRadius = '8px';
-                dayDiv.style.cursor = 'pointer';
-                dayDiv.style.display = 'flex';
-                dayDiv.style.justifyContent = 'space-between';
-                dayDiv.style.alignItems = 'center';
-                dayDiv.style.transition = 'all 0.2s';
-                
                 dayDiv.onclick = () => playArchiveDay(date);
-                dayDiv.onmouseover = () => {
-                    dayDiv.style.transform = 'translateY(-1px)';
-                    dayDiv.style.background = '#e9ecef';
-                };
-                dayDiv.onmouseout = () => {
-                    dayDiv.style.transform = 'translateY(0)';
-                    dayDiv.style.background = dayData && dayData.won ? '#dcfce7' : isToday ? '#dbeafe' : '#f8f9fa';
-                };
-                
                 archiveList.appendChild(dayDiv);
             }
         }
@@ -1262,7 +1258,7 @@
             document.getElementById('guess-input').value = '';
             document.getElementById('achievement-display').innerHTML = '';
             
-            // Aggressively remove any lingering lightbulb text
+            // Remove any lingering lightbulb text
             const inputSection = document.getElementById('input-section');
             const paragraphs = inputSection.querySelectorAll('p');
             paragraphs.forEach(p => {
@@ -1273,6 +1269,11 @@
         }
 
         function initGame() {
+            if (books.length === 0) {
+                console.log('No books loaded yet');
+                return;
+            }
+            
             loadGameHistory();
             currentBook = getTodaysBook();
             showCurrentDate();
@@ -1282,30 +1283,49 @@
             updateStatsDisplay();
         }
 
-        function startGame() {
-            document.getElementById('landing-page').style.display = 'none';
-            document.getElementById('game-container').style.display = 'block';
-            initGame();
-        }
-
-        function showLanding() {
-            document.getElementById('game-container').style.display = 'none';
-            document.getElementById('landing-page').style.display = 'flex';
-            selectedDate = null;
-        }
-
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             loadGameHistory();
-            loadDarkModePreference();
             
-            // Add Enter key support
             document.getElementById('guess-input').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     makeGuess();
                 }
             });
         });
+
+        // Auto-refresh books daily at midnight
+        function scheduleBookRefresh() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 1, 0, 0); // 12:01 AM tomorrow
+            
+            const msUntilMidnight = tomorrow.getTime() - now.getTime();
+            
+            setTimeout(() => {
+                loadBooksFromSheet().then(loadedBooks => {
+                    books = loadedBooks;
+                    if (!selectedDate) {
+                        initGame(); // Refresh today's game
+                    }
+                });
+                
+                // Set up daily refresh
+                setInterval(() => {
+                    loadBooksFromSheet().then(loadedBooks => {
+                        books = loadedBooks;
+                        if (!selectedDate) {
+                            initGame();
+                        }
+                    });
+                }, 24 * 60 * 60 * 1000); // Every 24 hours
+                
+            }, msUntilMidnight);
+        }
+
+        // Start the refresh scheduler
+        scheduleBookRefresh();
     </script>
 </body>
 </html>
