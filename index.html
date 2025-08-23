@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shelf Life | Southold Free Library</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cooper+Black&display=swap');
+        
         body {
             font-family: Arial, sans-serif;
             max-width: 600px;
@@ -12,6 +14,67 @@
             padding: 20px;
             background: #f5f5f5;
         }
+        
+        /* Landing Page Styles */
+        .landing-page {
+            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            margin: -20px;
+            padding: 20px;
+        }
+        
+        .landing-title {
+            font-family: 'Cooper Black', Arial, sans-serif;
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .landing-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            max-width: 500px;
+            line-height: 1.4;
+            opacity: 0.95;
+        }
+        
+        .play-button {
+            background: #8bc34a;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .play-button:hover {
+            background: #7cb342;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .landing-footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Game Styles */
+        .game-container {
+            display: none;
+        }
+        
         .container {
             background: white;
             padding: 20px;
@@ -19,36 +82,159 @@
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        
         h1 {
             text-align: center;
             color: #2563eb;
             margin-bottom: 5px;
-            font-family: Arial, sans-serif;
+            font-family: 'Cooper Black', Arial, sans-serif;
             font-weight: bold;
         }
+        
         .subtitle {
             text-align: center;
             color: #666;
             margin-bottom: 5px;
         }
+        
         .date {
             text-align: center;
             color: #999;
             font-size: 14px;
             margin-bottom: 20px;
         }
+        
         .clue {
             background: #dbeafe;
             padding: 15px;
             margin: 10px 0;
             border-left: 4px solid #2563eb;
             border-radius: 5px;
+            animation: slideIn 0.4s ease-out;
         }
-        .locked {
-            background: #f3f4f6;
-            color: #9ca3af;
-            border-left-color: #d1d5db;
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
+        
+        .guess {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .correct {
+            background: #dcfce7;
+            border: 1px solid #16a34a;
+        }
+        
+        .incorrect {
+            background: #fef2f2;
+            border: 1px solid #dc2626;
+        }
+        
+        .result {
+            text-align: center;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .win {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .lose {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+        
+        .share-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .share-button:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .stats-container {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin: 10px 0;
+            text-align: center;
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .stat-icon {
+            font-size: 18px;
+        }
+        
+        .stat-value {
+            color: #1f2937;
+        }
+        
+        .streak-badge {
+            display: inline-block;
+            background: #ff6b35;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .achievement {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
         input[type="text"] {
             width: 70%;
             padding: 10px;
@@ -56,6 +242,7 @@
             border-radius: 5px;
             font-size: 16px;
         }
+        
         button {
             padding: 10px 20px;
             background: #2563eb;
@@ -65,36 +252,11 @@
             cursor: pointer;
             font-size: 16px;
         }
+        
         button:hover {
             background: #1d4ed8;
         }
-        .guess {
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
-        .correct {
-            background: #dcfce7;
-            border: 1px solid #16a34a;
-        }
-        .incorrect {
-            background: #fef2f2;
-            border: 1px solid #dc2626;
-        }
-        .result {
-            text-align: center;
-            padding: 20px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-        .win {
-            background: #dcfce7;
-            color: #166534;
-        }
-        .lose {
-            background: #fef2f2;
-            color: #991b1b;
-        }
+        
         .library-link {
             background: #dbeafe;
             padding: 15px;
@@ -102,6 +264,7 @@
             border-radius: 5px;
             margin: 15px 0;
         }
+        
         .library-link a {
             background: #2563eb;
             color: white;
@@ -109,109 +272,132 @@
             text-decoration: none;
             border-radius: 5px;
         }
+        
         .hidden {
             display: none;
         }
-        .archive-day {
-            padding: 12px;
-            margin: 8px 0;
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .archive-day:hover {
-            background: #e9ecef;
-            transform: translateY(-1px);
-        }
-        .archive-day.completed {
-            background: #dcfce7;
-            border-color: #16a34a;
-        }
-        .archive-day.current {
-            background: #dbeafe;
-            border-color: #2563eb;
-            font-weight: bold;
-        }
-        .archive-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .archive-date {
-            font-weight: bold;
-            color: #333;
-        }
-        .archive-book {
-            font-size: 12px;
-            color: #666;
-            margin-top: 2px;
-        }
-        .archive-status {
-            font-size: 18px;
-        }
+        
         .nav-buttons {
             text-align: center;
             margin-bottom: 20px;
         }
+        
         .nav-buttons button {
             margin: 0 5px;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        @media (max-width: 600px) {
+            .landing-title {
+                font-size: 3rem;
+            }
+            .landing-subtitle {
+                font-size: 1.2rem;
+            }
+            .play-button {
+                padding: 15px 30px;
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>📚 Shelf Life</h1>
-    <p class="subtitle">Daily Book Guessing Game</p>
-    <p class="date" id="current-date"></p>
-
-    <div class="nav-buttons">
-        <button onclick="showTodaysGame()" id="today-btn">📅 Today's Game</button>
-        <button onclick="showArchiveList()" id="archive-btn">🗂️ Archive</button>
+    <!-- Landing Page -->
+    <div id="landing-page" class="landing-page">
+        <h1 class="landing-title">Shelf Life</h1>
+        <p class="landing-subtitle">Discover the book title based on simple clues.</p>
+        <button class="play-button" onclick="startGame()">play now</button>
+        <div class="landing-footer">designed by anakin jackson for southold free library</div>
     </div>
 
-    <div id="game-section">
-        <div class="container">
-            <h3>📋 Clues (<span id="clue-count">1</span>/6)</h3>
-            <div id="clues"></div>
-        </div>
+    <!-- Game Container -->
+    <div id="game-container" class="game-container">
+        <button class="back-button" onclick="showLanding()">← Home</button>
+        
+        <h1>📚 Shelf Life</h1>
+        <p class="subtitle">Daily Book Guessing Game</p>
+        <p class="date" id="current-date"></p>
 
-        <div class="container" id="input-section">
-            <h3>Your Guess</h3>
-            <input type="text" id="guess-input" placeholder="Enter book title...">
-            <button onclick="makeGuess()">Submit</button>
-        </div>
-
-        <div class="container hidden" id="guesses-section">
-            <h3>Your Guesses (<span id="guess-count">0</span>/6)</h3>
-            <div id="guesses"></div>
-        </div>
-
-        <div class="container hidden" id="result-section">
-            <div id="result-text"></div>
-            <div class="library-link">
-                <p>📖 <strong>Available at Southold Free Library</strong></p>
-                <a href="https://southold-suffc.na.iiivega.com" target="_blank">Search Our Catalog</a>
+        <div style="text-align: center;">
+            <div class="stats-container">
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <span class="stat-icon">🔥</span>
+                        <span class="stat-value" id="streak-display">0 day streak</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="container hidden" id="archive-section">
-        <h3>🗂️ Game Archive</h3>
-        <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Click any day to play that puzzle</p>
-        <div id="archive-list" style="max-height: 400px; overflow-y: auto;"></div>
-    </div>
+        <div class="nav-buttons">
+            <button onclick="showTodaysGame()" id="today-btn">📅 Today's Game</button>
+            <button onclick="showArchiveList()" id="archive-btn">🗂️ Archive</button>
+        </div>
 
-    <div style="text-align: center; margin-top: 30px; padding: 20px; color: #666; font-size: 14px;">
-        <p>Powered by <a href="https://southoldlibrary.org" target="_blank" style="color: #2563eb; text-decoration: none;">Southold Free Library</a></p>
-        <p style="font-size: 12px; margin-top: 10px;">© 2025 Southold Free Library. All rights reserved.</p>
+        <div id="game-section">
+            <div class="container">
+                <h3>📋 Clues (<span id="clue-count">1</span>/6)</h3>
+                <div id="clues"></div>
+            </div>
+
+            <div class="container" id="input-section">
+                <h3>Your Guess</h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="guess-input" placeholder="Enter book title..." style="width: 60%;">
+                    <button onclick="makeGuess()" style="width: 50px; font-size: 18px;">→</button>
+                    <button onclick="skipClue()" style="background: #6b7280; width: auto; padding: 10px 15px; font-size: 14px;">Skip</button>
+                </div>
+                <p style="font-size: 12px; color: #666; margin-top: 5px; margin-bottom: 0;">💡 Skipping reveals the next clue but counts as one of your 6 guesses</p>
+            </div>
+
+            <div class="container hidden" id="guesses-section">
+                <h3>Your Guesses (<span id="guess-count">0</span>/6)</h3>
+                <div id="guesses"></div>
+            </div>
+
+            <div class="container hidden" id="result-section">
+                <div id="result-text"></div>
+                <div style="text-align: center; margin: 15px 0;">
+                    <button class="share-button" onclick="shareResults()">📋 Share Results</button>
+                </div>
+                <div class="library-link">
+                    <p>📖 <strong>Available at Southold Free Library</strong></p>
+                    <a href="https://southold-suffc.na.iiivega.com" target="_blank">Search Our Catalog</a>
+                </div>
+                <div id="achievement-display"></div>
+            </div>
+        </div>
+
+        <div class="container hidden" id="archive-section">
+            <h3>🗂️ Game Archive</h3>
+            <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Click any day to play that puzzle</p>
+            <div id="archive-list" style="max-height: 400px; overflow-y: auto;"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding: 20px; color: #666; font-size: 14px;">
+            <p>Powered by <a href="https://southoldlibrary.org" target="_blank" style="color: #2563eb; text-decoration: none;">Southold Free Library</a></p>
+            <p style="font-size: 12px; margin-top: 10px;">© 2025 Southold Free Library. All rights reserved.</p>
+        </div>
     </div>
 
     <script>
-        // Extended book list for better variety
+        // Book database
         const books = [
             { title: "PRIDE AND PREJUDICE", author: "Jane Austen" },
             { title: "THE GREAT GATSBY", author: "F. Scott Fitzgerald" },
@@ -245,65 +431,46 @@
             { title: "THE OLD MAN AND THE SEA", author: "Ernest Hemingway" }
         ];
 
+        // Game state
         let currentBook;
         let guesses = [];
         let cluesShown = 1;
         let gameOver = false;
         let selectedDate = null;
         let gameHistory = {};
+        let playerStats = {
+            streak: 0,
+            gamesPlayed: 0,
+            gamesWon: 0,
+            achievements: []
+        };
 
-        // Load game history from localStorage (or initialize empty)
-        function loadGameHistory() {
-            try {
-                const saved = localStorage.getItem('shelflife-history');
-                gameHistory = saved ? JSON.parse(saved) : {};
-            } catch (e) {
-                gameHistory = {};
-            }
-        }
+        // Achievements
+        const achievements = [
+            { id: "first_win", name: "First Victory", description: "Win your first game", emoji: "🎉" },
+            { id: "streak_3", name: "Hot Streak", description: "Win 3 days in a row", emoji: "🔥" },
+            { id: "perfect_game", name: "Perfect Game", description: "Win with only 1 guess", emoji: "💎" },
+            { id: "bookworm", name: "Bookworm", description: "Play 25 games", emoji: "📚" }
+        ];
 
-        // Save game history to localStorage
-        function saveGameHistory() {
-            try {
-                localStorage.setItem('shelflife-history', JSON.stringify(gameHistory));
-            } catch (e) {
-                // localStorage not available, continue without saving
-            }
-        }
-
+        // Utility functions
         function normalizeForComparison(title) {
             return title
                 .toUpperCase()
                 .trim()
                 .replace(/[^\w\s]/g, '')
                 .replace(/\s+/g, ' ')
+                .replace(/^(THE|A|AN)\s+/g, '')
                 .replace(/\bNINETEEN EIGHTY FOUR\b/g, '1984')
                 .replace(/\bNINETEEN EIGHTY THREE\b/g, '1983')
                 .replace(/\bNINETEEN EIGHTY TWO\b/g, '1982')
                 .replace(/\bNINETEEN EIGHTY ONE\b/g, '1981')
-                .replace(/\bNINETEEN EIGHTY\b/g, '1980')
                 .replace(/\bTWENTY TWENTY FOUR\b/g, '2024')
                 .replace(/\bTWENTY TWENTY THREE\b/g, '2023')
                 .replace(/\bTWENTY TWENTY TWO\b/g, '2022')
                 .replace(/\bTWENTY TWENTY ONE\b/g, '2021')
                 .replace(/\bTWENTY TWENTY\b/g, '2020')
                 .replace(/\bTWO THOUSAND\b/g, '2000')
-                .replace(/\bTWENTY ONE\b/g, '21')
-                .replace(/\bTWENTY TWO\b/g, '22')
-                .replace(/\bTWENTY THREE\b/g, '23')
-                .replace(/\bTWENTY FOUR\b/g, '24')
-                .replace(/\bTWENTY FIVE\b/g, '25')
-                .replace(/\bTWENTY SIX\b/g, '26')
-                .replace(/\bTWENTY SEVEN\b/g, '27')
-                .replace(/\bTWENTY EIGHT\b/g, '28')
-                .replace(/\bTWENTY NINE\b/g, '29')
-                .replace(/\bTHIRTY\b/g, '30')
-                .replace(/\bFORTY\b/g, '40')
-                .replace(/\bFIFTY\b/g, '50')
-                .replace(/\bSIXTY\b/g, '60')
-                .replace(/\bSEVENTY\b/g, '70')
-                .replace(/\bEIGHTY\b/g, '80')
-                .replace(/\bNINETY\b/g, '90')
                 .replace(/\bONE\b/g, '1')
                 .replace(/\bTWO\b/g, '2')
                 .replace(/\bTHREE\b/g, '3')
@@ -314,18 +481,6 @@
                 .replace(/\bEIGHT\b/g, '8')
                 .replace(/\bNINE\b/g, '9')
                 .replace(/\bTEN\b/g, '10')
-                .replace(/\bELEVEN\b/g, '11')
-                .replace(/\bTWELVE\b/g, '12')
-                .replace(/\bTHIRTEEN\b/g, '13')
-                .replace(/\bFOURTEEN\b/g, '14')
-                .replace(/\bFIFTEEN\b/g, '15')
-                .replace(/\bSIXTEEN\b/g, '16')
-                .replace(/\bSEVENTEEN\b/g, '17')
-                .replace(/\bEIGHTEEN\b/g, '18')
-                .replace(/\bNINETEEN\b/g, '19')
-                .replace(/\bTWENTY\b/g, '20')
-                .replace(/\bHUNDRED\b/g, '100')
-                .replace(/\bTHOUSAND\b/g, '1000')
                 .trim();
         }
 
@@ -339,8 +494,11 @@
 
         function getTodaysBook(date = null) {
             const targetDate = date || selectedDate || new Date();
-            const dayOfYear = Math.floor((targetDate - new Date(targetDate.getFullYear(), 0, 0)) / 86400000);
-            return books[dayOfYear % books.length];
+            const year = targetDate.getFullYear();
+            const dayOfYear = Math.floor((targetDate - new Date(year, 0, 0)) / 86400000);
+            const seed = year * 1000 + dayOfYear;
+            const bookIndex = seed % books.length;
+            return books[bookIndex];
         }
 
         function showCurrentDate() {
@@ -635,6 +793,36 @@
             return 'Various meaningful locations that shape the story';
         }
 
+        // Game functions
+        function loadGameHistory() {
+            try {
+                const saved = localStorage.getItem('shelflife-history');
+                gameHistory = saved ? JSON.parse(saved) : {};
+                
+                const savedStats = localStorage.getItem('shelflife-stats');
+                if (savedStats) {
+                    playerStats = { ...playerStats, ...JSON.parse(savedStats) };
+                }
+                
+                updateStatsDisplay();
+            } catch (e) {
+                gameHistory = {};
+            }
+        }
+
+        function saveGameHistory() {
+            try {
+                localStorage.setItem('shelflife-history', JSON.stringify(gameHistory));
+                localStorage.setItem('shelflife-stats', JSON.stringify(playerStats));
+            } catch (e) {
+                // localStorage not available
+            }
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('streak-display').textContent = `${playerStats.streak} day streak`;
+        }
+
         function showClues() {
             const clues = generateClues(currentBook);
             const cluesContainer = document.getElementById('clues');
@@ -648,6 +836,22 @@
             }
             
             document.getElementById('clue-count').textContent = cluesShown;
+        }
+
+        function skipClue() {
+            if (gameOver || cluesShown >= 6) return;
+            
+            guesses.push({ text: "(SKIPPED)", correct: false, isSkip: true });
+            cluesShown = Math.min(6, cluesShown + 1);
+            showClues();
+            
+            if (guesses.length >= 6) {
+                gameOver = true;
+                endGame(false);
+            }
+            
+            displayGuesses();
+            saveGameState();
         }
 
         function makeGuess() {
@@ -665,6 +869,11 @@
             
             if (isCorrect) {
                 gameOver = true;
+                playerStats.gamesPlayed++;
+                playerStats.gamesWon++;
+                playerStats.streak++;
+                
+                checkAchievements(true);
                 endGame(true);
             } else {
                 cluesShown = Math.min(6, cluesShown + 1);
@@ -672,6 +881,8 @@
                 
                 if (guesses.length >= 6) {
                     gameOver = true;
+                    playerStats.gamesPlayed++;
+                    playerStats.streak = 0;
                     endGame(false);
                 }
             }
@@ -689,7 +900,15 @@
             
             guesses.forEach(guess => {
                 const guessDiv = document.createElement('div');
-                guessDiv.className = `guess ${guess.correct ? 'correct' : 'incorrect'}`;
+                if (guess.isSkip) {
+                    guessDiv.className = 'guess';
+                    guessDiv.style.background = '#f3f4f6';
+                    guessDiv.style.border = '1px solid #d1d5db';
+                    guessDiv.style.color = '#6b7280';
+                    guessDiv.style.fontStyle = 'italic';
+                } else {
+                    guessDiv.className = `guess ${guess.correct ? 'correct' : 'incorrect'}`;
+                }
                 guessDiv.textContent = guess.text;
                 guessesContainer.appendChild(guessDiv);
             });
@@ -703,10 +922,11 @@
             
             const resultDiv = document.getElementById('result-text');
             if (won) {
+                const actualGuesses = guesses.filter(g => !g.isSkip).length;
                 resultDiv.innerHTML = `
                     <div class="result win">
                         <h3>🎉 Congratulations!</h3>
-                        <p>You guessed "${currentBook.title}" by ${currentBook.author} in ${guesses.length} guess${guesses.length === 1 ? '' : 'es'}!</p>
+                        <p>You guessed "${currentBook.title}" by ${currentBook.author} in ${actualGuesses} guess${actualGuesses === 1 ? '' : 'es'}!</p>
                     </div>
                 `;
             } else {
@@ -716,6 +936,77 @@
                         <p>The book was "${currentBook.title}" by ${currentBook.author}</p>
                     </div>
                 `;
+            }
+            
+            updateStatsDisplay();
+        }
+
+        function checkAchievements(won) {
+            const newAchievements = [];
+            
+            if (won && !playerStats.achievements.includes('first_win') && playerStats.gamesWon === 1) {
+                newAchievements.push('first_win');
+            }
+            
+            if (won && guesses.filter(g => !g.isSkip).length === 1 && !playerStats.achievements.includes('perfect_game')) {
+                newAchievements.push('perfect_game');
+            }
+            
+            if (playerStats.streak >= 3 && !playerStats.achievements.includes('streak_3')) {
+                newAchievements.push('streak_3');
+            }
+            
+            if (playerStats.gamesPlayed >= 25 && !playerStats.achievements.includes('bookworm')) {
+                newAchievements.push('bookworm');
+            }
+            
+            newAchievements.forEach(achievementId => {
+                if (!playerStats.achievements.includes(achievementId)) {
+                    playerStats.achievements.push(achievementId);
+                    showAchievement(achievementId);
+                }
+            });
+        }
+
+        function showAchievement(achievementId) {
+            const achievement = achievements.find(a => a.id === achievementId);
+            if (!achievement) return;
+            
+            const achievementEl = document.createElement('div');
+            achievementEl.className = 'achievement';
+            achievementEl.innerHTML = `
+                <strong>${achievement.emoji} ${achievement.name}</strong><br>
+                <span style="font-size: 12px;">${achievement.description}</span>
+            `;
+            
+            document.getElementById('achievement-display').appendChild(achievementEl);
+        }
+
+        function shareResults() {
+            const dateKey = getDateKey(selectedDate || new Date());
+            const gameData = gameHistory[dateKey];
+            
+            if (!gameData) return;
+            
+            const dayNumber = Math.floor((new Date() - new Date('2024-01-01')) / 86400000) + 1;
+            const guessEmojis = gameData.guesses.map(guess => {
+                if (guess.isSkip) return '⏭️';
+                return guess.correct ? '🟩' : '🟥';
+            });
+            
+            while (guessEmojis.length < 6 && gameData.won) {
+                guessEmojis.push('⬜');
+            }
+            
+            const result = gameData.won ? `${guessEmojis.length}/6` : 'X/6';
+            const shareText = `Shelf Life #${dayNumber} ${result}\n\n${guessEmojis.join('')}\n\nPlay at: ${window.location.href}`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('Results copied to clipboard!');
+                });
+            } else {
+                prompt('Copy this text to share:', shareText);
             }
         }
 
@@ -760,7 +1051,6 @@
             
             const today = new Date();
             
-            // Show last 30 days
             for (let i = 29; i >= 0; i--) {
                 const date = new Date(today);
                 date.setDate(date.getDate() - i);
@@ -774,26 +1064,45 @@
                 
                 const statusIcon = dayData && dayData.won ? '✅' : dayData && dayData.gameOver ? '❌' : '⏳';
                 
-                // Only show book title if completed or today
                 let bookInfo = '';
                 if (dayData && dayData.gameOver) {
                     const bookForDay = dayData.book || getTodaysBook(date);
-                    bookInfo = `<div class="archive-book">${bookForDay.title} by ${bookForDay.author}</div>`;
+                    bookInfo = `<div style="font-size: 12px; color: #666; margin-top: 2px;">${bookForDay.title} by ${bookForDay.author}</div>`;
                 } else if (isToday) {
-                    bookInfo = `<div class="archive-book">Today's puzzle</div>`;
+                    bookInfo = `<div style="font-size: 12px; color: #666; margin-top: 2px;">Today's puzzle</div>`;
                 } else {
-                    bookInfo = `<div class="archive-book">Click to play</div>`;
+                    bookInfo = `<div style="font-size: 12px; color: #666; margin-top: 2px;">Click to play</div>`;
                 }
                 
                 dayDiv.innerHTML = `
-                    <div class="archive-info">
-                        <div class="archive-date">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${isToday ? '(Today)' : ''}</div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                        <div style="font-weight: bold; color: #333;">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${isToday ? '(Today)' : ''}</div>
                         ${bookInfo}
                     </div>
-                    <div class="archive-status">${statusIcon}</div>
+                    <div style="font-size: 18px;">${statusIcon}</div>
                 `;
                 
+                dayDiv.style.padding = '12px';
+                dayDiv.style.margin = '8px 0';
+                dayDiv.style.background = dayData && dayData.won ? '#dcfce7' : isToday ? '#dbeafe' : '#f8f9fa';
+                dayDiv.style.border = `1px solid ${dayData && dayData.won ? '#16a34a' : isToday ? '#2563eb' : '#ddd'}`;
+                dayDiv.style.borderRadius = '8px';
+                dayDiv.style.cursor = 'pointer';
+                dayDiv.style.display = 'flex';
+                dayDiv.style.justifyContent = 'space-between';
+                dayDiv.style.alignItems = 'center';
+                dayDiv.style.transition = 'all 0.2s';
+                
                 dayDiv.onclick = () => playArchiveDay(date);
+                dayDiv.onmouseover = () => {
+                    dayDiv.style.transform = 'translateY(-1px)';
+                    dayDiv.style.background = '#e9ecef';
+                };
+                dayDiv.onmouseout = () => {
+                    dayDiv.style.transform = 'translateY(0)';
+                    dayDiv.style.background = dayData && dayData.won ? '#dcfce7' : isToday ? '#dbeafe' : '#f8f9fa';
+                };
+                
                 archiveList.appendChild(dayDiv);
             }
         }
@@ -817,6 +1126,7 @@
             document.getElementById('result-section').classList.add('hidden');
             document.getElementById('input-section').classList.remove('hidden');
             document.getElementById('guess-input').value = '';
+            document.getElementById('achievement-display').innerHTML = '';
         }
 
         function initGame() {
@@ -826,17 +1136,32 @@
             resetGameUI();
             loadGameState();
             showClues();
+            updateStatsDisplay();
         }
 
-        // Handle Enter key in input
-        document.getElementById('guess-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                makeGuess();
-            }
-        });
+        function startGame() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+            initGame();
+        }
 
-        // Start the game when page loads
-        initGame();
+        function showLanding() {
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('landing-page').style.display = 'flex';
+            selectedDate = null;
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGameHistory();
+            
+            // Add Enter key support
+            document.getElementById('guess-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    makeGuess();
+                }
+            });
+        });
     </script>
 </body>
 </html>
