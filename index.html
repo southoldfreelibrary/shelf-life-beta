@@ -533,9 +533,9 @@
         let books = [];
 
         // Google Sheets configuration
-        const SHEET_ID = 'YOUR_SHEET_ID_HERE'; // Replace with your Google Sheet ID
+        const SHEET_ID = '1YiA19vJ-bq5LsPdhlVACxdIbGYi3jNXUskbaGT0zNhk'; // Replace with your Google Sheet ID
         const SHEET_NAME = 'Books'; // Name of your sheet tab
-        const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your Google Sheets API key
+        const API_KEY = 'AIzaSyDSlOD4ASrsrWs_R27LGOxW7TGSvIW3DPs'; // Replace with your Google Sheets API key
 
         // Default books (fallback if Google Sheets fails)
         const defaultBooks = [
@@ -569,15 +569,16 @@
                 if (!rows || rows.length <= 1) throw new Error('No data found');
                 
                 const booksFromSheet = rows.slice(1).map(row => ({
-                    title: (row[0] || '').toUpperCase().trim(),
-                    author: (row[1] || '').trim(),
-                    isbn: (row[2] || '').trim(),
-                    clue1: (row[3] || '').trim(),
-                    clue2: (row[4] || '').trim(),
-                    clue3: (row[5] || '').trim(),
-                    clue4: (row[6] || '').trim(),
-                    clue5: (row[7] || '').trim(),
-                    clue6: (row[8] || '').trim()
+                    date: (row[0] || '').trim(), // New date column
+                    title: (row[1] || '').toUpperCase().trim(),
+                    author: (row[2] || '').trim(),
+                    isbn: (row[3] || '').trim(),
+                    clue1: (row[4] || '').trim(),
+                    clue2: (row[5] || '').trim(),
+                    clue3: (row[6] || '').trim(),
+                    clue4: (row[7] || '').trim(),
+                    clue5: (row[8] || '').trim(),
+                    clue6: (row[9] || '').trim()
                 })).filter(book => book.title && book.author);
                 
                 console.log(`Loaded ${booksFromSheet.length} books from Google Sheets`);
@@ -659,10 +660,15 @@
         // Enhanced daily book selection with time-based rotation
         function getTodaysBook(date = null) {
             const targetDate = date || selectedDate || new Date();
-            const startDate = new Date('2025-01-01'); // Match the game numbering start date
-            const daysSinceStart = Math.floor((targetDate - startDate) / (24 * 60 * 60 * 1000));
-            const bookIndex = Math.max(0, daysSinceStart) % books.length;
-            return books[bookIndex];
+            const todayKey = targetDate.toISOString().split('T')[0]; // e.g. "2025-08-23"
+        
+            // Look for a book in the sheet with a matching date
+            const bookForToday = books.find(book => book.date === todayKey);
+            if (bookForToday) return bookForToday;
+        
+            // Fallback if no matching date
+            console.warn(`No book scheduled for ${todayKey}, using first book as fallback`);
+            return books[0];
         }
 
         function getDayNumber(date = null) {
@@ -1102,31 +1108,30 @@
             
             const archiveList = document.getElementById('archive-list');
             archiveList.innerHTML = '';
-            
-            const today = new Date();
-            
-            for (let i = 29; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(date.getDate() - i);
-                
-                const dateKey = getDateKey(date);
+        
+            // Sort books by date ascending
+            const sortedBooks = [...books].filter(b => b.date).sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+            sortedBooks.forEach(book => {
+                const date = new Date(book.date);
+                const dateKey = book.date;
                 const dayData = gameHistory[dateKey];
                 const isToday = dateKey === getDateKey(new Date());
-                
+        
                 const dayDiv = document.createElement('div');
                 dayDiv.className = `archive-day ${dayData && dayData.won ? 'completed' : ''} ${isToday ? 'current' : ''}`;
-                
+        
                 const statusIcon = dayData && dayData.won ? '✅' : dayData && dayData.gameOver ? '❌' : '⏳';
-                
+        
                 let bookInfo = '';
                 if (dayData && dayData.gameOver && dayData.book) {
                     bookInfo = `<p class="archive-book">${dayData.book.title} by ${dayData.book.author}</p>`;
                 } else if (isToday) {
                     bookInfo = `<p class="archive-book">Today's puzzle</p>`;
                 } else {
-                    bookInfo = `<p class="archive-book">Click to play</p>`;
+                    bookInfo = `<p class="archive-book">${book.title} by ${book.author}</p>`;
                 }
-                
+        
                 dayDiv.innerHTML = `
                     <div class="archive-info">
                         <h4>${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} ${isToday ? '(Today)' : ''}</h4>
@@ -1134,10 +1139,10 @@
                     </div>
                     <div class="archive-status">${statusIcon}</div>
                 `;
-                
+        
                 dayDiv.onclick = () => playArchiveDay(date);
                 archiveList.appendChild(dayDiv);
-            }
+            });
         }
 
         function showTodaysGame() {
