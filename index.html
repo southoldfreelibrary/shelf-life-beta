@@ -407,12 +407,27 @@
             }
             
             .input-group {
-                flex-direction: column;
-                gap: 10px;
+                display: flex;
+                gap: 8px;
+                align-items: stretch;
+                margin-top: 15px;
             }
             
             .input-group input {
-                width: 100%;
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .submit-btn, .skip-btn {
+                flex-shrink: 0;
+                min-width: 44px;
+                width: 44px;
+                height: 44px;
+                padding: 0;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             
             .nav-buttons button {
@@ -585,41 +600,48 @@
             return title
                 .toUpperCase()
                 .trim()
-                .replace(/[^\w\s]/g, '')
-                .replace(/\s+/g, ' ')
-                .replace(/^(THE|A|AN)\s+/g, '')
-                // Handle common number conversions (both ways)
-                .replace(/\bNINETEEN EIGHTY FOUR\b/g, '1984').replace(/\b1984\b/g, 'NINETEEN EIGHTY FOUR')
-                .replace(/\bNINETEEN EIGHTY THREE\b/g, '1983').replace(/\b1983\b/g, 'NINETEEN EIGHTY THREE')
-                .replace(/\bTWO THOUSAND\b/g, '2000').replace(/\b2000\b/g, 'TWO THOUSAND')
-                .replace(/\bONE HUNDRED\b/g, '100').replace(/\b100\b/g, 'ONE HUNDRED')
-                .replace(/\bFIFTY\b/g, '50').replace(/\b50\b/g, 'FIFTY')
-                .replace(/\bTWENTY\b/g, '20').replace(/\b20\b/g, 'TWENTY')
-                .replace(/\bTHIRTY\b/g, '30').replace(/\b30\b/g, 'THIRTY')
-                .replace(/\bFORTY\b/g, '40').replace(/\b40\b/g, 'FORTY')
-                .replace(/\bSIXTY\b/g, '60').replace(/\b60\b/g, 'SIXTY')
-                .replace(/\bSEVENTY\b/g, '70').replace(/\b70\b/g, 'SEVENTY')
-                .replace(/\bEIGHTY\b/g, '80').replace(/\b80\b/g, 'EIGHTY')
-                .replace(/\bNINETY\b/g, '90').replace(/\b90\b/g, 'NINETY')
-                .replace(/\bONE\b/g, '1').replace(/\b1\b/g, 'ONE')
-                .replace(/\bTWO\b/g, '2').replace(/\b2\b/g, 'TWO')
-                .replace(/\bTHREE\b/g, '3').replace(/\b3\b/g, 'THREE')
-                .replace(/\bFOUR\b/g, '4').replace(/\b4\b/g, 'FOUR')
-                .replace(/\bFIVE\b/g, '5').replace(/\b5\b/g, 'FIVE')
-                .replace(/\bSIX\b/g, '6').replace(/\b6\b/g, 'SIX')
-                .replace(/\bSEVEN\b/g, '7').replace(/\b7\b/g, 'SEVEN')
-                .replace(/\bEIGHT\b/g, '8').replace(/\b8\b/g, 'EIGHT')
-                .replace(/\bNINE\b/g, '9').replace(/\b9\b/g, 'NINE')
-                .replace(/\bTEN\b/g, '10').replace(/\b10\b/g, 'TEN')
-                .replace(/\bELEVEN\b/g, '11').replace(/\b11\b/g, 'ELEVEN')
-                .replace(/\bTWELVE\b/g, '12').replace(/\b12\b/g, 'TWELVE')
-                .replace(/\bTHIRTEEN\b/g, '13').replace(/\b13\b/g, 'THIRTEEN')
-                .replace(/\bFOURTEEN\b/g, '14').replace(/\b14\b/g, 'FOURTEEN')
-                .replace(/\bFIFTEEN\b/g, '15').replace(/\b15\b/g, 'FIFTEEN')
-                .replace(/\bSIXTEEN\b/g, '16').replace(/\b16\b/g, 'SIXTEEN')
-                .replace(/\bSEVENTEEN\b/g, '17').replace(/\b17\b/g, 'SEVENTEEN')
-                .replace(/\bEIGHTEEN\b/g, '18').replace(/\b18\b/g, 'EIGHTEEN')
-                .replace(/\bNINETEEN\b/g, '19').replace(/\b19\b/g, 'NINETEEN')
+                .replace(/[^\w\s]/g, ' ')  // Replace all punctuation with spaces
+                .replace(/\s+/g, ' ')      // Collapse multiple spaces
+                .replace(/\b(THE|A|AN|TO|OF|AND|IN|ON|AT|BY|FOR|WITH|FROM)\b/g, '') // Remove articles and common words
+                .replace(/\bNINETEEN EIGHTY FOUR\b/g, '1984')
+                .replace(/\b1984\b/g, 'NINETEEN EIGHTY FOUR')
+                .replace(/\bTWENTY THOUSAND LEAGUES UNDER THE SEA\b/g, '20000 LEAGUES UNDER SEA')
+                .replace(/\b20000 LEAGUES UNDER SEA\b/g, 'TWENTY THOUSAND LEAGUES UNDER SEA')
+                .replace(/\bFAHRENHEIT FOUR HUNDRED FIFTY ONE\b/g, '451')
+                .replace(/\b451\b/g, 'FOUR HUNDRED FIFTY ONE')
+                .replace(/\bCATCH TWENTY TWO\b/g, '22')
+                .replace(/\b22\b/g, 'TWENTY TWO')
+                .replace(/\bTWO THOUSAND ONE\b/g, '2001')
+                .replace(/\b2001\b/g, 'TWO THOUSAND ONE')
+                .replace(/\bONE HUNDRED\b/g, '100')
+                .replace(/\b100\b/g, 'ONE HUNDRED')
+                .replace(/\bFIFTY\b/g, '50')
+                .replace(/\b50\b/g, 'FIFTY')
+                .replace(/\bTWENTY\b/g, '20')
+                .replace(/\b20\b/g, 'TWENTY')
+                .replace(/\bTHIRTY\b/g, '30')
+                .replace(/\b30\b/g, 'THIRTY')
+                .replace(/\bONE\b/g, '1')
+                .replace(/\b1\b/g, 'ONE')
+                .replace(/\bTWO\b/g, '2')
+                .replace(/\b2\b/g, 'TWO')
+                .replace(/\bTHREE\b/g, '3')
+                .replace(/\b3\b/g, 'THREE')
+                .replace(/\bFOUR\b/g, '4')
+                .replace(/\b4\b/g, 'FOUR')
+                .replace(/\bFIVE\b/g, '5')
+                .replace(/\b5\b/g, 'FIVE')
+                .replace(/\bSIX\b/g, '6')
+                .replace(/\b6\b/g, 'SIX')
+                .replace(/\bSEVEN\b/g, '7')
+                .replace(/\b7\b/g, 'SEVEN')
+                .replace(/\bEIGHT\b/g, '8')
+                .replace(/\b8\b/g, 'EIGHT')
+                .replace(/\bNINE\b/g, '9')
+                .replace(/\b9\b/g, 'NINE')
+                .replace(/\bTEN\b/g, '10')
+                .replace(/\b10\b/g, 'TEN')
+                .replace(/\s+/g, ' ')      // Clean up spaces again
                 .trim();
         }
 
@@ -627,61 +649,7 @@
             const normalizedGuess = normalizeForComparison(guess);
             const normalizedTarget = normalizeForComparison(target);
             
-            // Direct match
-            if (normalizedGuess === normalizedTarget) return true;
-            
-            // Try matching with numbers converted to words and vice versa
-            const guessVariants = [
-                normalizedGuess,
-                normalizedGuess.replace(/\b(\d+)\b/g, (match, num) => numberToWord(parseInt(num))),
-                normalizedGuess.replace(/\b(ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN|ELEVEN|TWELVE|THIRTEEN|FOURTEEN|FIFTEEN|SIXTEEN|SEVENTEEN|EIGHTEEN|NINETEEN|TWENTY|THIRTY|FORTY|FIFTY|SIXTY|SEVENTY|EIGHTY|NINETY|HUNDRED|THOUSAND)\b/g, (match) => wordToNumber(match))
-            ].filter(Boolean);
-            
-            const targetVariants = [
-                normalizedTarget,
-                normalizedTarget.replace(/\b(\d+)\b/g, (match, num) => numberToWord(parseInt(num))),
-                normalizedTarget.replace(/\b(ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN|ELEVEN|TWELVE|THIRTEEN|FOURTEEN|FIFTEEN|SIXTEEN|SEVENTEEN|EIGHTEEN|NINETEEN|TWENTY|THIRTY|FORTY|FIFTY|SIXTY|SEVENTY|EIGHTY|NINETY|HUNDRED|THOUSAND)\b/g, (match) => wordToNumber(match))
-            ].filter(Boolean);
-            
-            // Check all combinations
-            for (let guessVar of guessVariants) {
-                for (let targetVar of targetVariants) {
-                    if (guessVar === targetVar) return true;
-                }
-            }
-            
-            return false;
-        }
-
-        function numberToWord(num) {
-            const ones = ['', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'];
-            const teens = ['TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN', 'FIFTEEN', 'SIXTEEN', 'SEVENTEEN', 'EIGHTEEN', 'NINETEEN'];
-            const tens = ['', '', 'TWENTY', 'THIRTY', 'FORTY', 'FIFTY', 'SIXTY', 'SEVENTY', 'EIGHTY', 'NINETY'];
-            
-            if (num === 0) return 'ZERO';
-            if (num < 10) return ones[num];
-            if (num < 20) return teens[num - 10];
-            if (num < 100) return tens[Math.floor(num / 10)] + (num % 10 ? ' ' + ones[num % 10] : '');
-            if (num === 100) return 'ONE HUNDRED';
-            if (num === 1000) return 'ONE THOUSAND';
-            if (num === 1984) return 'NINETEEN EIGHTY FOUR';
-            if (num === 2000) return 'TWO THOUSAND';
-            
-            return num.toString();
-        }
-
-        function wordToNumber(word) {
-            const wordToNum = {
-                'ZERO': '0', 'ONE': '1', 'TWO': '2', 'THREE': '3', 'FOUR': '4', 'FIVE': '5',
-                'SIX': '6', 'SEVEN': '7', 'EIGHT': '8', 'NINE': '9', 'TEN': '10',
-                'ELEVEN': '11', 'TWELVE': '12', 'THIRTEEN': '13', 'FOURTEEN': '14', 'FIFTEEN': '15',
-                'SIXTEEN': '16', 'SEVENTEEN': '17', 'EIGHTEEN': '18', 'NINETEEN': '19',
-                'TWENTY': '20', 'THIRTY': '30', 'FORTY': '40', 'FIFTY': '50',
-                'SIXTY': '60', 'SEVENTY': '70', 'EIGHTY': '80', 'NINETY': '90',
-                'HUNDRED': '100', 'THOUSAND': '1000'
-            };
-            
-            return wordToNum[word] || word;
+            return normalizedGuess === normalizedTarget;
         }
 
         function getDateKey(date) {
