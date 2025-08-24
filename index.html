@@ -148,7 +148,7 @@
       justify-content: center;
       gap: 15px;
       margin: 15px 0;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     .stat-card {
@@ -555,7 +555,7 @@
       body { padding: 10px; }
       .game-title { font-size: 1.8rem; }
       .checkout-info { flex-direction: column; gap: 5px; }
-      .stats-row { flex-direction: column; align-items: center; }
+      .stats-row { flex-wrap: nowrap; }
       .stamp-btn { 
         display: block; 
         width: 90%; 
@@ -601,16 +601,14 @@
   </div>
 
   <!-- Stats Card -->
-  <div class="library-card">
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">STREAK</div>
-        <div class="stat-value">🔥 <span id="streakCount">0</span></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">THEME</div>
-        <div class="stat-value" id="themeHint">📖 Loading...</div>
-      </div>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">STREAK</div>
+      <div class="stat-value">🔥 <span id="streakCount">0</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">THEME</div>
+      <div class="stat-value" id="themeHint">📖 Loading...</div>
     </div>
   </div>
 
