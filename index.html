@@ -1,307 +1,206 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Shelf Life</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
-      text-align: center;
+<script>
+/* =====================
+   GLOBALS
+===================== */
+let currentDate = null;
+let gameData = JSON.parse(localStorage.getItem("gameData")) || {};
+let stats = JSON.parse(localStorage.getItem("stats")) || {
+    gamesPlayed: 0,
+    gamesWon: 0,
+    currentStreak: 0,
+    maxStreak: 0
+};
+
+// books object assumed to be defined above this script
+// format: books["YYYY-MM-DD"] = { title: "Book Title", author: "Author" }
+
+/* =====================
+   LOAD GAME
+===================== */
+function loadGame(dateStr, options = {}) {
+    const reviewMode = options.reviewMode || false;
+    currentDate = dateStr;
+
+    const dayData = gameData[dateStr] || { guesses: [], gameOver: false, solved: false };
+    const book = books[dateStr];
+
+    // 🔧 TODO: draw your puzzle UI here (use book info)
+
+    if (!reviewMode && !dayData.gameOver) {
+        stats.gamesPlayed++;
+        localStorage.setItem("stats", JSON.stringify(stats));
     }
-    header {
-      background: #222;
-      color: white;
-      padding: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+
+    gameData[dateStr] = dayData;
+    localStorage.setItem("gameData", JSON.stringify(gameData));
+}
+
+/* =====================
+   END GAME
+===================== */
+function endGame(dateStr, solved) {
+    const dayData = gameData[dateStr] || { guesses: [] };
+
+    dayData.gameOver = true;
+    dayData.solved = solved;
+    gameData[dateStr] = dayData;
+
+    if (solved) {
+        stats.gamesWon++;
+        stats.currentStreak++;
+        if (stats.currentStreak > stats.maxStreak) stats.maxStreak = stats.currentStreak;
+    } else {
+        stats.currentStreak = 0;
     }
-    header h1 {
-      margin: 0;
-      font-size: 20px;
+
+    localStorage.setItem("stats", JSON.stringify(stats));
+    localStorage.setItem("gameData", JSON.stringify(gameData));
+
+    // show stats modal + share button
+    showStatsModal();
+}
+
+/* =====================
+   ARCHIVE LIST
+===================== */
+function showArchiveList() {
+    const archiveList = document.getElementById("archive-list");
+    archiveList.innerHTML = "";
+
+    const allDates = Object.keys(books).map(d => new Date(d));
+    const minDate = new Date(Math.min(...allDates));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const dates = [];
+    for (let d = new Date(today); d >= minDate; d = new Date(d.getTime() - 86400000)) {
+        dates.push(new Date(d));
     }
-    .btn {
-      padding: 8px 12px;
-      margin: 5px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #444;
-      color: white;
-    }
-    .archive-item {
-      background: white;
-      margin: 5px;
-      padding: 10px;
-      border-radius: 6px;
-      text-align: left;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-    }
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
-      margin: 100px auto;
-      text-align: center;
-    }
-  </style>
-</head>
-<body>
 
-  <header>
-    <h1>Shelf Life</h1>
-    <div>
-      <button class="btn" onclick="showArchiveList()">📚 Archive</button>
-      <button class="btn" onclick="showStatsModal()">📊 Stats</button>
-    </div>
-  </header>
+    dates.forEach(date => {
+        const dateStr = date.toISOString().split("T")[0];
+        const isFuture = date > today;
+        const dayData = gameData[dateStr] || {};
+        const book = books[dateStr];
 
-  <main>
-    <h2 id="puzzleTitle">Today’s Puzzle</h2>
-    <div id="puzzleArea">
-      <!-- Puzzle UI would go here -->
-    </div>
-  </main>
+        let statusIcon = "";
+        let bookInfo = "";
 
-  <!-- Archive Modal -->
-  <div id="archiveModal" class="modal">
-    <div class="modal-content">
-      <h2>Archive</h2>
-      <div id="archive-list"></div>
-      <button class="btn" onclick="document.getElementById('archiveModal').style.display='none'">Close</button>
-    </div>
-  </div>
+        if (isFuture) {
+            statusIcon = "🔒";
+            bookInfo = `<p class="archive-book locked">Available on ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>`;
+        } else if (dayData.gameOver && dayData.solved && book) {
+            statusIcon = "✅";
+            bookInfo = `<p class="archive-book">${book.title} by ${book.author}</p>`;
+        } else if (dayData.gameOver && !dayData.solved) {
+            statusIcon = "❌";
+            bookInfo = "<p class='archive-book locked'>Unsolved puzzle</p>";
+        } else {
+            statusIcon = "⚪";
+            bookInfo = "<p class='archive-book locked'>Unplayed puzzle</p>";
+        }
 
-  <!-- Stats Modal -->
-  <div id="statsModal" class="modal">
-    <div class="modal-content">
-      <h2>Statistics</h2>
-      <p>Games Played: <span id="gamesPlayed">0</span></p>
-      <p>Games Won: <span id="gamesWon">0</span></p>
-      <p>Win %: <span id="winPct">0%</span></p>
-      <p>Current Streak: <span id="currentStreak">0</span></p>
-      <p>Max Streak: <span id="maxStreak">0</span></p>
-      <p>Next Puzzle In: <span id="countdown">--:--:--</span></p>
-      <button class="btn" onclick="shareResults()">📤 Share Results</button>
-      <button class="btn" onclick="document.getElementById('statsModal').style.display='none'">Close</button>
-    </div>
-  </div>
+        const archiveItem = document.createElement("div");
+        archiveItem.className = "archive-item";
+        archiveItem.innerHTML = `
+            <div class="archive-header">
+                <span class="archive-date">${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                <span class="archive-status">${statusIcon}</span>
+            </div>
+            ${bookInfo}
+        `;
 
-  <script>
-  /* =====================
-     GLOBALS
-  ===================== */
-  let currentDate = null;
-  let gameData = JSON.parse(localStorage.getItem("gameData")) || {};
-  let stats = JSON.parse(localStorage.getItem("stats")) || {
-      gamesPlayed: 0,
-      gamesWon: 0,
-      currentStreak: 0,
-      maxStreak: 0
-  };
-
-  // EXAMPLE BOOK DATA (replace with your real puzzles!)
-  const books = {
-    "2025-08-21": { title: "Moby Dick", author: "Herman Melville" },
-    "2025-08-22": { title: "1984", author: "George Orwell" },
-    "2025-08-23": { title: "Pride and Prejudice", author: "Jane Austen" }
-  };
-
-  /* =====================
-     LOAD GAME
-  ===================== */
-  function loadGame(dateStr, options = {}) {
-      const reviewMode = options.reviewMode || false;
-      currentDate = dateStr;
-
-      const dayData = gameData[dateStr] || { guesses: [], gameOver: false, solved: false };
-      const book = books[dateStr];
-
-      // Simple placeholder UI
-      document.getElementById("puzzleTitle").textContent =
-        book ? `Guess the Book (${dateStr})` : `Puzzle for ${dateStr}`;
-
-      if (!reviewMode && !dayData.gameOver) {
-          stats.gamesPlayed++;
-          localStorage.setItem("stats", JSON.stringify(stats));
-      }
-
-      gameData[dateStr] = dayData;
-      localStorage.setItem("gameData", JSON.stringify(gameData));
-  }
-
-  /* =====================
-     END GAME
-  ===================== */
-  function endGame(dateStr, solved) {
-      const dayData = gameData[dateStr] || { guesses: [] };
-
-      dayData.gameOver = true;
-      dayData.solved = solved;
-      gameData[dateStr] = dayData;
-
-      if (solved) {
-          stats.gamesWon++;
-          stats.currentStreak++;
-          if (stats.currentStreak > stats.maxStreak) stats.maxStreak = stats.currentStreak;
-      } else {
-          stats.currentStreak = 0;
-      }
-
-      localStorage.setItem("stats", JSON.stringify(stats));
-      localStorage.setItem("gameData", JSON.stringify(gameData));
-
-      // show stats modal automatically
-      showStatsModal();
-  }
-
-  /* =====================
-     ARCHIVE LIST
-  ===================== */
-  function showArchiveList() {
-      const archiveList = document.getElementById("archive-list");
-      archiveList.innerHTML = "";
-
-      const allDates = Object.keys(books).map(d => new Date(d));
-      const minDate = new Date(Math.min(...allDates));
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const dates = [];
-      for (let d = new Date(today); d >= minDate; d = new Date(d.getTime() - 86400000)) {
-          dates.push(new Date(d));
-      }
-
-      dates.forEach(date => {
-          const dateStr = date.toISOString().split("T")[0];
-          const isFuture = date > today;
-          const dayData = gameData[dateStr] || {};
-          const book = books[dateStr];
-
-          let statusIcon = "";
-          let bookInfo = "";
-
-          if (isFuture) {
-              statusIcon = "🔒";
-              bookInfo = `<p class="archive-book locked">Available on ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>`;
-          } else if (dayData.gameOver && dayData.solved && book) {
-              statusIcon = "✅";
-              bookInfo = `<p class="archive-book">${book.title} by ${book.author}</p>`;
-          } else if (dayData.gameOver && !dayData.solved) {
-              statusIcon = "❌";
-              bookInfo = "<p class='archive-book locked'>Unsolved puzzle</p>";
-          } else {
-              statusIcon = "⚪";
-              bookInfo = "<p class='archive-book locked'>Unplayed puzzle</p>";
-          }
-
-          const archiveItem = document.createElement("div");
-          archiveItem.className = "archive-item";
-          archiveItem.innerHTML = `
-              <div class="archive-header">
-                  <span class="archive-date">${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                  <span class="archive-status">${statusIcon}</span>
-              </div>
-              ${bookInfo}
-          `;
-
-          if (dayData.gameOver && book) {
-              archiveItem.addEventListener("click", () => {
-                  loadGame(dateStr, { reviewMode: true });
-                  document.getElementById("archiveModal").style.display = "none";
-              });
-          }
-
-          archiveList.appendChild(archiveItem);
-      });
-
-      document.getElementById("archiveModal").style.display = "block";
-  }
-
-  /* =====================
-     STATS MODAL
-  ===================== */
-  function showStatsModal() {
-      const modal = document.getElementById("statsModal");
-
-      const winPct = stats.gamesPlayed > 0 ? Math.round((stats.gamesWon / stats.gamesPlayed) * 100) : 0;
-
-      document.getElementById("gamesPlayed").textContent = stats.gamesPlayed;
-      document.getElementById("gamesWon").textContent = stats.gamesWon;
-      document.getElementById("winPct").textContent = winPct + "%";
-      document.getElementById("currentStreak").textContent = stats.currentStreak;
-      document.getElementById("maxStreak").textContent = stats.maxStreak;
-
-      startCountdown();
-
-      modal.style.display = "block";
-  }
-
-  /* =====================
-     COUNTDOWN
-  ===================== */
-  function startCountdown() {
-      const el = document.getElementById("countdown");
-      if (!el) return;
-
-      function updateCountdown() {
-          const now = new Date();
-          const midnight = new Date();
-          midnight.setHours(24,0,0,0);
-          const diff = midnight - now;
-
-          const h = String(Math.floor(diff / (1000*60*60))).padStart(2,"0");
-          const m = String(Math.floor((diff % (1000*60*60)) / (1000*60))).padStart(2,"0");
-          const s = String(Math.floor((diff % (1000*60)) / 1000)).padStart(2,"0");
-
-          el.textContent = `${h}:${m}:${s}`;
-      }
-
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
-  }
-
-  /* =====================
-     SHARE
-  ===================== */
-  function shareResults() {
-      const dayData = gameData[currentDate];
-      if (!dayData) return;
-
-      const grid = dayData.solved ? "🟩🟩🟩" : "⬜⬜⬜"; // placeholder
-      const text = `Shelf Life ${currentDate}\n${grid}\nPlay at: https://shelf-life-beta.vercel.app`;
-
-      if (navigator.share) {
-          navigator.share({ title: "Shelf Life", text })
-            .catch(() => {
-              navigator.clipboard.writeText(text);
-              alert("Results copied to clipboard!");
+        if (dayData.gameOver && book) {
+            archiveItem.addEventListener("click", () => {
+                loadGame(dateStr, { reviewMode: true });
+                document.getElementById("archiveModal").style.display = "none";
             });
-      } else {
-          navigator.clipboard.writeText(text);
-          alert("Results copied to clipboard!");
-      }
-  }
+        }
 
-  /* =====================
-     INIT
-  ===================== */
-  window.onload = function() {
-      const today = new Date();
-      const todayStr = today.toISOString().split("T")[0];
-      loadGame(todayStr);
-  }
-  </script>
+        archiveList.appendChild(archiveItem);
+    });
 
-</body>
-</html>
+    document.getElementById("archiveModal").style.display = "block";
+}
+
+/* =====================
+   STATS MODAL
+===================== */
+function showStatsModal() {
+    const modal = document.getElementById("statsModal");
+    if (!modal) return;
+
+    // calc stats
+    const winPct = stats.gamesPlayed > 0 ? Math.round((stats.gamesWon / stats.gamesPlayed) * 100) : 0;
+
+    document.getElementById("gamesPlayed").textContent = stats.gamesPlayed;
+    document.getElementById("gamesWon").textContent = stats.gamesWon;
+    document.getElementById("winPct").textContent = winPct + "%";
+    document.getElementById("currentStreak").textContent = stats.currentStreak;
+    document.getElementById("maxStreak").textContent = stats.maxStreak;
+
+    // start countdown
+    startCountdown();
+
+    modal.style.display = "block";
+}
+
+/* =====================
+   COUNTDOWN TIMER
+===================== */
+function startCountdown() {
+    const el = document.getElementById("countdown");
+    if (!el) return;
+
+    function updateCountdown() {
+        const now = new Date();
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const diff = midnight - now;
+
+        const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
+        const m = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0");
+        const s = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, "0");
+
+        el.textContent = `${h}:${m}:${s}`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+}
+
+/* =====================
+   SHARE RESULTS
+===================== */
+function shareResults() {
+    const dayData = gameData[currentDate];
+    if (!dayData) return;
+
+    // build emoji grid (placeholder, customize to match your game!)
+    const grid = dayData.guesses.map(g => g.correct ? "🟩" : "⬜").join("");
+
+    const text = `Shelf Life ${currentDate}\n${grid}\nPlay at: https://shelf-life-beta.vercel.app`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: "Shelf Life",
+            text: text
+        }).catch(() => {
+            navigator.clipboard.writeText(text);
+            alert("Results copied to clipboard!");
+        });
+    } else {
+        navigator.clipboard.writeText(text);
+        alert("Results copied to clipboard!");
+    }
+}
+
+/* =====================
+   INIT
+===================== */
+window.onload = function() {
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+    loadGame(todayStr);
+};
+</script>
