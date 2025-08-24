@@ -1,206 +1,733 @@
-<script>
-/* =====================
-   GLOBALS
-===================== */
-let currentDate = null;
-let gameData = JSON.parse(localStorage.getItem("gameData")) || {};
-let stats = JSON.parse(localStorage.getItem("stats")) || {
-    gamesPlayed: 0,
-    gamesWon: 0,
-    currentStreak: 0,
-    maxStreak: 0
-};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Shelf Life | Southold Free Library</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap');
 
-// books object assumed to be defined above this script
-// format: books["YYYY-MM-DD"] = { title: "Book Title", author: "Author" }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      max-width: 600px; margin: 0 auto; padding: 20px;
+      background: #f5f5f5; min-height: 100vh;
+    }
+    .header {
+      text-align: center; margin-bottom: 30px;
+      background: linear-gradient(135deg, rgba(139,195,74,.05), rgba(52,152,219,.05));
+      border: 1px solid rgba(52,152,219,.1); padding: 20px; border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    }
+    h1 {
+      font-family: 'Merriweather', serif; font-size: 2.8rem; font-weight: 700;
+      background: linear-gradient(135deg,#8bc34a,#3498db);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin: 0 0 10px 0; display:flex; align-items:center; justify-content:center; gap:10px; letter-spacing:-.02em;
+    }
+    .subtitle { font-family:'Playfair Display',serif; font-style: italic; color:#666; font-size:1.1rem; margin:0; }
+    .date-info {
+      background: linear-gradient(135deg, rgba(139,195,74,.1), rgba(52,152,219,.1));
+      border: 1px solid rgba(52,152,219,.2); padding: 15px; border-radius: 8px; margin: 15px 0; text-align: center;
+    }
+    .game-number {
+      font-weight: 600;
+      background: linear-gradient(135deg,#8bc34a,#3498db);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size:1.1rem;
+    }
+    .theme-hint {
+      background:white; border:1px solid rgba(52,152,219,.2); border-radius:6px; padding:8px 12px; margin:15px 0;
+      text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.1); display:inline-block; font-size:.9rem; color:#1f2937; font-weight:500;
+    }
+    .container {
+      background:white; padding:20px; border-radius:10px; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,.1);
+    }
+    .stats-container {
+      background:white; border:1px solid rgba(52,152,219,.2); border-radius:6px; padding:10px 12px; margin:15px 0;
+      text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.1); display:inline-block;
+    }
+    .streak-display { font-size:1rem; font-weight:600; color:#1f2937; }
 
-/* =====================
-   LOAD GAME
-===================== */
-function loadGame(dateStr, options = {}) {
-    const reviewMode = options.reviewMode || false;
-    currentDate = dateStr;
+    .clue {
+      background: linear-gradient(135deg, rgba(139,195,74,.08), rgba(52,152,219,.08));
+      border:1px solid rgba(52,152,219,.2); padding:15px; margin:10px 0; border-left:4px solid #3498db; border-radius:5px; animation:slideIn .4s ease-out;
+    }
+    @keyframes slideIn { from {opacity:0; transform: translateX(-20px);} to {opacity:1; transform: translateX(0);} }
 
-    const dayData = gameData[dateStr] || { guesses: [], gameOver: false, solved: false };
-    const book = books[dateStr];
+    .guess { padding:12px; margin:8px 0; border-radius:8px; animation: fadeIn .3s ease-in; font-weight:500; }
+    @keyframes fadeIn { from {opacity:0; transform: translateY(-10px);} to {opacity:1; transform: translateY(0);} }
+    .correct { background: linear-gradient(135deg, rgba(139,195,74,.15), rgba(139,195,74,.1)); border:2px solid #8bc34a; color:#2e7d32; }
+    .incorrect { background:#fef2f2; border:2px solid #dc2626; color:#991b1b; }
+    .skipped { background:#f3f4f6; border:2px solid #d1d5db; color:#6b7280; font-style: italic; }
 
-    // 🔧 TODO: draw your puzzle UI here (use book info)
+    .input-group { display:flex; gap:10px; align-items:center; margin-top:15px; }
+    input[type="text"] {
+      flex:1; padding:12px; border:2px solid #d1d5db; border-radius:8px; font-size:16px; font-family:'Poppins',sans-serif; transition: border-color .2s;
+    }
+    input[type="text"]:focus { outline:none; border-color:#2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    button {
+      padding:12px 20px; background: linear-gradient(135deg,#8bc34a,#3498db); color:white; border:none; border-radius:8px; cursor:pointer;
+      font-size:16px; font-weight:500; transition: all .2s ease; font-family:'Poppins',sans-serif;
+    }
+    button:hover { background: linear-gradient(135deg,#7cb342,#2980b9); transform: translateY(-1px); }
+    .skip-btn { background:#dc2626; min-width:50px; font-size:18px; padding:12px; display:flex; align-items:center; justify-content:center; }
+    .skip-btn:hover { background:#b91c1c; }
+    .submit-btn { min-width:50px; font-size:18px; padding:12px; display:flex; align-items:center; justify-content:center; }
 
-    if (!reviewMode && !dayData.gameOver) {
-        stats.gamesPlayed++;
-        localStorage.setItem("stats", JSON.stringify(stats));
+    .result { text-align:center; padding:25px; border-radius:10px; margin:20px 0; font-size:1.1rem; font-weight:500; }
+    .win { background:#dcfce7; color:#166534; border:2px solid #16a34a; }
+    .lose { background:#fef2f2; color:#991b1b; border:2px solid #dc2626; }
+
+    .share-button { background:#10b981; margin:10px; }
+    .share-button:hover { background:#059669; }
+
+    .library-link {
+      background:white; border:2px solid #2563eb; padding:20px; text-align:center; border-radius:10px; margin:20px 0;
+    }
+    .library-link a {
+      background: linear-gradient(135deg,#8bc34a,#3498db); color:white; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight:600; transition: all .2s; display:inline-block;
+    }
+    .library-link a:hover { background: linear-gradient(135deg,#7cb342,#2980b9); transform: translateY(-1px); }
+
+    .achievement {
+      background:#fef3c7; border:2px solid #f59e0b; border-radius:8px; padding:15px; margin:15px 0; text-align:center; animation: bounceIn .6s ease-out; color:#92400e; font-weight:600;
+    }
+    @keyframes bounceIn { 0%{transform:scale(.3); opacity:0;} 50%{transform:scale(1.05);} 100%{transform:scale(1); opacity:1;} }
+
+    .nav-buttons { text-align:center; margin:20px 0; }
+    .nav-buttons button { margin: 0 10px 10px 10px; }
+
+    .hidden { display:none; }
+
+    /* Archive */
+    .archive-day {
+      padding: 15px; margin: 10px 0; background: white; border: 2px solid #e5e7eb; border-radius: 10px; cursor:pointer; transition: all .2s;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .archive-day:hover { border-color:#2563eb; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .archive-day.played { border-color:#16a34a; background:#f0fdf4; }
+    .archive-day.unplayed { border-color:#e5e7eb; background:white; }
+    .archive-day.locked { opacity:.6; cursor:not-allowed; background:#f3f4f6; border-color:#d1d5db; }
+    .archive-day.locked:hover { transform:none; box-shadow:none; border-color:#d1d5db; }
+
+    .archive-info h4 { margin:0 0 5px 0; color:#1f2937; }
+    .archive-book { font-size:.9rem; color:#6b7280; margin:0; }
+    .archive-status { font-size:1.5rem; }
+    .archive-book.locked { color:#9ca3af; font-style: italic; }
+
+    @media (max-width:600px) {
+      body { padding:10px; }
+      h1 { font-size:2rem; }
+      .input-group { display:flex; gap:8px; align-items:stretch; margin-top:15px; }
+      .input-group input { flex:1; min-width:0; }
+      .submit-btn,.skip-btn { flex-shrink:0; min-width:44px; width:44px; height:44px; padding:0; font-size:16px; display:flex; align-items:center; justify-content:center; }
+      .nav-buttons button { display:block; width:100%; margin:5px 0; }
     }
 
-    gameData[dateStr] = dayData;
-    localStorage.setItem("gameData", JSON.stringify(gameData));
-}
+    .loading { display:inline-block; width:20px; height:20px; border:3px solid #f3f3f3; border-top:3px solid #2563eb; border-radius:50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Shelf Life</h1>
+    <p class="subtitle">Daily Book Guessing Game</p>
+    <div class="date-info">
+      <div class="game-number" id="game-number">Loading...</div>
+      <div id="current-date"></div>
+    </div>
+  </div>
 
-/* =====================
-   END GAME
-===================== */
-function endGame(dateStr, solved) {
-    const dayData = gameData[dateStr] || { guesses: [] };
+  <div style="text-align:center;">
+    <div class="stats-container">
+      <div class="streak-display">🔥 <span id="streak-count">0</span> day streak</div>
+    </div>
+    <div class="theme-hint" id="theme-hint" style="display:none;"></div>
+  </div>
 
-    dayData.gameOver = true;
-    dayData.solved = solved;
-    gameData[dateStr] = dayData;
+  <div class="nav-buttons">
+    <button onclick="showTodaysGame()">📅 Today's Game</button>
+    <button onclick="showArchiveList()">🗂️ Archive</button>
+  </div>
 
-    if (solved) {
-        stats.gamesWon++;
-        stats.currentStreak++;
-        if (stats.currentStreak > stats.maxStreak) stats.maxStreak = stats.currentStreak;
-    } else {
-        stats.currentStreak = 0;
+  <div id="game-section">
+    <div class="container">
+      <h3>📋 Clues (<span id="clue-count">1</span>/6)</h3>
+      <div id="clues"></div>
+    </div>
+
+    <div class="container" id="input-section">
+      <h3>Your Guess</h3>
+      <div class="input-group">
+        <input type="text" id="guess-input" placeholder="Enter book title...">
+        <button class="submit-btn" onclick="makeGuess()">→</button>
+        <button class="skip-btn" onclick="skipClue()">✕</button>
+      </div>
+    </div>
+
+    <div class="container hidden" id="guesses-section">
+      <h3>Your Guesses (<span id="guess-count">0</span>/6)</h3>
+      <div id="guesses"></div>
+    </div>
+
+    <div class="container hidden" id="result-section">
+      <div id="result-text"></div>
+      <div style="text-align:center;">
+        <button class="share-button" onclick="shareResults()">📋 Copy Results</button>
+      </div>
+      <div class="library-link">
+        <p><strong>📖 Find this book at Southold Free Library</strong></p>
+        <a href="#" id="catalog-link" target="_blank">Search Our Catalog</a>
+      </div>
+      <div id="achievement-display"></div>
+    </div>
+  </div>
+
+  <div class="container hidden" id="archive-section">
+    <h3>🗂️ Game Archive</h3>
+    <p style="color:#6b7280; margin-bottom:20px;">Click any day to play that puzzle</p>
+    <div id="archive-list"></div>
+  </div>
+
+  <div style="text-align:center; margin-top:40px; padding:25px; border-top:1px solid #e5e7eb; color:#6b7280; font-size:14px;">
+    <p style="margin:0 0 10px 0; font-weight:500;">Powered by <a href="https://southoldlibrary.org" target="_blank" style="color:#3498db; text-decoration:none; font-weight:600;">Southold Free Library</a></p>
+    <p style="margin:0; font-size:12px;">© 2025 Southold Free Library. All rights reserved.</p>
+  </div>
+
+  <script>
+    /**********************
+     * CONFIG & STATE
+     **********************/
+    const JSON_DATA_URL = 'https://shelf-life-beta.vercel.app/books.json';
+    const GAME_START_DATE = new Date('2025-08-22T00:00:00');
+    const NY_TZ = 'America/New_York';
+
+    let books = [];            // array of book objects from JSON
+    let booksByDate = {};      // map YYYY-MM-DD -> book
+    let currentBook = null;
+
+    let guesses = [];
+    let cluesShown = 1;
+    let gameOver = false;
+    let selectedDate = null;   // Date object when playing archive day
+
+    // Persisted state
+    let gameHistory = {};  // by dateKey -> { guesses, cluesShown, gameOver, won, book }
+    let playerStats = { streak: 0, gamesPlayed: 0, gamesWon: 0, achievements: [] };
+
+    /**********************
+     * TIME HELPERS (NY)
+     **********************/
+    function nyDate(date = new Date()) {
+      // Return a Date representing the same calendar day/time in New York
+      // For day keys we only care about date parts, so use formatter.
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: NY_TZ, year: 'numeric', month: '2-digit', day: '2-digit'
+      }).formatToParts(date).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
+      return new Date(`${parts.year}-${parts.month}-${parts.day}T00:00:00`);
+    }
+    function nyTodayKey() {
+      return new Intl.DateTimeFormat('en-CA', { timeZone: NY_TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    }
+    function dateToKeyNY(d) {
+      return new Intl.DateTimeFormat('en-CA', { timeZone: NY_TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+    }
+    function fmtLongNY(d) {
+      return new Intl.DateTimeFormat('en-US', { timeZone: NY_TZ, weekday:'long', year:'numeric', month:'long', day:'numeric' }).format(d);
+    }
+    function fmtShortNY(d) {
+      return new Intl.DateTimeFormat('en-US', { timeZone: NY_TZ, month:'short', day:'numeric', year:'numeric' }).format(d);
     }
 
-    localStorage.setItem("stats", JSON.stringify(stats));
-    localStorage.setItem("gameData", JSON.stringify(gameData));
-
-    // show stats modal + share button
-    showStatsModal();
-}
-
-/* =====================
-   ARCHIVE LIST
-===================== */
-function showArchiveList() {
-    const archiveList = document.getElementById("archive-list");
-    archiveList.innerHTML = "";
-
-    const allDates = Object.keys(books).map(d => new Date(d));
-    const minDate = new Date(Math.min(...allDates));
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const dates = [];
-    for (let d = new Date(today); d >= minDate; d = new Date(d.getTime() - 86400000)) {
-        dates.push(new Date(d));
+    /**********************
+     * STORAGE
+     **********************/
+    function loadGameHistory() {
+      try {
+        const saved = localStorage.getItem('shelflife-history');
+        gameHistory = saved ? JSON.parse(saved) : {};
+        const savedStats = localStorage.getItem('shelflife-stats');
+        if (savedStats) playerStats = { ...playerStats, ...JSON.parse(savedStats) };
+        updateStatsDisplay();
+      } catch {
+        gameHistory = {};
+      }
+    }
+    function saveGameHistory() {
+      localStorage.setItem('shelflife-history', JSON.stringify(gameHistory));
+      localStorage.setItem('shelflife-stats', JSON.stringify(playerStats));
     }
 
-    dates.forEach(date => {
-        const dateStr = date.toISOString().split("T")[0];
-        const isFuture = date > today;
-        const dayData = gameData[dateStr] || {};
-        const book = books[dateStr];
+    /**********************
+     * BOOK LOADING
+     **********************/
+    async function loadBooksFromJSON() {
+      try {
+        const res = await fetch(JSON_DATA_URL, { cache: 'no-cache' });
+        if (!res.ok) throw new Error('Failed to fetch books.json: ' + res.status);
+        const arr = await res.json();
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) {
+        console.error(e);
+        // Minimal fallback
+        return [
+          { date:'2025-08-22', title:'THE GREAT GATSBY', author:'F. Scott Fitzgerald', theme:'American Literature', clue1:'A mysterious millionaire throws lavish parties' },
+          { date:'2025-08-23', title:'THE 48 LAWS OF POWER', author:'Robert Greene', theme:'Self-Help', clue1:'A numbered guide to mastering influence' }
+        ];
+      }
+    }
+    function indexBooks(arr) {
+      books = arr
+        .filter(b => b && b.date && b.title && b.author)
+        .sort((a,b) => new Date(a.date) - new Date(b.date));
+      booksByDate = {};
+      books.forEach(b => { booksByDate[b.date] = b; });
+    }
 
-        let statusIcon = "";
-        let bookInfo = "";
+    /**********************
+     * GAME CORE
+     **********************/
+    function getTodaysBook(dateOverride = null) {
+      const target = dateOverride || selectedDate || nyDate();
+      const key = dateToKeyNY(target);
+      // Exact match first
+      if (booksByDate[key]) return booksByDate[key];
 
+      // If not present and this is "today's game", pick most recent <= today
+      if (!selectedDate) {
+        const todayNY = nyDate();
+        const candidates = books.filter(b => nyDate(new Date(b.date)) <= todayNY);
+        if (candidates.length) return candidates[candidates.length - 1];
+      }
+      // Fallback: first book
+      return books[0] || null;
+    }
+
+    function getDayNumber(dateOverride = null) {
+      const target = dateOverride || selectedDate || nyDate();
+      const daysSince = Math.floor((nyDate(target) - nyDate(GAME_START_DATE)) / 86400000);
+      return Math.max(1, daysSince + 1);
+    }
+
+    function updateCatalogLink(book) {
+      const catalogLink = document.getElementById('catalog-link');
+      if (book && book.isbn) {
+        catalogLink.href = 'https://southold-suffc.na.iiivega.com/search?query=' + encodeURIComponent(book.isbn);
+      } else if (book) {
+        const q = (book.title + ' ' + book.author).replace(/[^\w\s]/g, ' ').trim();
+        catalogLink.href = 'https://southold-suffc.na.iiivega.com/search?query=' + encodeURIComponent(q);
+      } else {
+        catalogLink.href = 'https://southold-suffc.na.iiivega.com';
+      }
+    }
+
+    function showCurrentDate() {
+      const target = selectedDate || nyDate();
+      document.getElementById('current-date').textContent = fmtLongNY(target);
+      document.getElementById('game-number').textContent = 'Game #' + String(getDayNumber(target)).padStart(3,'0');
+
+      const themeEl = document.getElementById('theme-hint');
+      if (currentBook && currentBook.theme) {
+        themeEl.textContent = currentBook.theme;
+        themeEl.style.display = 'inline-block';
+      } else {
+        themeEl.style.display = 'none';
+      }
+    }
+
+    function generateClues(book) {
+      if (!book) return [];
+      if (book.clue1) {
+        const addEmoji = (clue, emoji) => {
+          if (!clue || !clue.trim()) return '';
+          const hasEmoji = /^[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(clue.trim());
+          return hasEmoji ? clue : `${emoji} ${clue}`;
+        };
+        return [
+          addEmoji(book.clue1,'⭐'),
+          addEmoji(book.clue2,'👤'),
+          addEmoji(book.clue3,'📅'),
+          addEmoji(book.clue4,'🎭'),
+          addEmoji(book.clue5,'📖'),
+          addEmoji(book.clue6,'👥')
+        ].filter(Boolean);
+      }
+      const defaults = {
+        "THE GREAT GATSBY": [
+          "⭐ A mysterious millionaire throws lavish parties hoping to win back his lost love",
+          "👤 Author: Fitzgerald",
+          "📅 Published: 1925",
+          "🎭 Themes: American Dream, wealth vs morality",
+          "📖 Setting: Long Island & NYC, summer 1922",
+          "👥 Character: Jay Gatsby"
+        ],
+        "THE 48 LAWS OF POWER": [
+          "⭐ A numbered guide to mastering influence",
+          "👤 Stories of Napoleon, Cleopatra, Sun Tzu",
+          "📅 Widely banned in U.S. prisons",
+          "🎭 Published in 1998, still a bestseller",
+          "📖 Dubbed the “Machiavellian Bible”",
+          "👥 Author: Robert Greene"
+        ]
+      };
+      return defaults[book.title] || [
+        "⭐ A compelling story that captivated readers",
+        "👤 Author: " + (book.author || '').split(' ').slice(-1)[0],
+        "📅 Era: Classic literature",
+        "🎭 Themes: Human nature and society",
+        "📖 Setting: Significant locations",
+        "👥 Features: Memorable characters"
+      ];
+    }
+
+    function showClues() {
+      const list = generateClues(currentBook);
+      const wrap = document.getElementById('clues');
+      wrap.innerHTML = '';
+      for (let i = 0; i < cluesShown; i++) {
+        const d = document.createElement('div');
+        d.className = 'clue';
+        d.textContent = list[i] || `Clue ${i+1} not available`;
+        wrap.appendChild(d);
+      }
+      document.getElementById('clue-count').textContent = Math.min(cluesShown, 6);
+    }
+
+    function normalizeTitle(s) {
+      return s.toUpperCase()
+        .replace(/[^\w\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .replace(/\b(THE|A|AN|TO|OF|AND|IN|ON|AT|BY|FOR|WITH|FROM)\b/g, '')
+        .replace(/\bNINETEEN EIGHTY FOUR\b/g, '1984').replace(/\b1984\b/g, 'NINETEEN EIGHTY FOUR')
+        .replace(/\bTWENTY THOUSAND LEAGUES UNDER THE SEA\b/g, '20000 LEAGUES UNDER SEA').replace(/\b20000 LEAGUES UNDER SEA\b/g, 'TWENTY THOUSAND LEAGUES UNDER SEA')
+        .replace(/\bFAHRENHEIT FOUR HUNDRED FIFTY ONE\b/g, '451').replace(/\b451\b/g, 'FOUR HUNDRED FIFTY ONE')
+        .replace(/\bCATCH TWENTY TWO\b/g, '22').replace(/\b22\b/g, 'TWENTY TWO')
+        .replace(/\bTWO THOUSAND ONE\b/g, '2001').replace(/\b2001\b/g, 'TWO THOUSAND ONE')
+        .replace(/\bONE HUNDRED\b/g, '100').replace(/\b100\b/g, 'ONE HUNDRED')
+        .replace(/\bFIFTY\b/g, '50').replace(/\b50\b/g, 'FIFTY')
+        .replace(/\bTWENTY\b/g, '20').replace(/\b20\b/g, 'TWENTY')
+        .replace(/\bTHIRTY\b/g, '30').replace(/\b30\b/g, 'THIRTY')
+        .replace(/\bONE\b/g, '1').replace(/\b1\b/g, 'ONE')
+        .replace(/\bTWO\b/g, '2').replace(/\b2\b/g, 'TWO')
+        .replace(/\bTHREE\b/g, '3').replace(/\b3\b/g, 'THREE')
+        .replace(/\bFOUR\b/g, '4').replace(/\b4\b/g, 'FOUR')
+        .replace(/\bFIVE\b/g, '5').replace(/\b5\b/g, 'FIVE')
+        .replace(/\bSIX\b/g, '6').replace(/\b6\b/g, 'SIX')
+        .replace(/\bSEVEN\b/g, '7').replace(/\b7\b/g, 'SEVEN')
+        .replace(/\bEIGHT\b/g, '8').replace(/\b8\b/g, 'EIGHT')
+        .replace(/\bNINE\b/g, '9').replace(/\b9\b/g, 'NINE')
+        .replace(/\bTEN\b/g, '10').replace(/\b10\b/g, 'TEN')
+        .trim();
+    }
+    function titlesMatch(guess, target) {
+      return normalizeTitle(guess) === normalizeTitle(target);
+    }
+
+    function displayGuesses() {
+      const wrap = document.getElementById('guesses');
+      if (!guesses.length) { document.getElementById('guesses-section').classList.add('hidden'); return; }
+      document.getElementById('guesses-section').classList.remove('hidden');
+      wrap.innerHTML = '';
+      guesses.forEach(g => {
+        const div = document.createElement('div');
+        div.className = 'guess ' + (g.isSkip ? 'skipped' : (g.correct ? 'correct' : 'incorrect'));
+        div.textContent = g.text;
+        wrap.appendChild(div);
+      });
+      document.getElementById('guess-count').textContent = guesses.length;
+    }
+
+    function updateStatsDisplay() {
+      document.getElementById('streak-count').textContent = playerStats.streak || 0;
+    }
+
+    function updateDailyStats(won) {
+      // Only count today's puzzle for streaks/gamesPlayed
+      const isTodayGame = !selectedDate || dateToKeyNY(selectedDate) === nyTodayKey();
+      if (!isTodayGame) return;
+
+      playerStats.gamesPlayed++;
+      if (won) {
+        playerStats.gamesWon++;
+        playerStats.streak = (playerStats.streak || 0) + 1;
+      } else {
+        playerStats.streak = 0;
+      }
+      saveGameHistory();
+    }
+
+    function checkAchievements(won) {
+      const newOnes = [];
+      if (won && !playerStats.achievements.includes('first_win') && playerStats.gamesWon === 1) newOnes.push('first_win');
+      if (won && guesses.filter(g => !g.isSkip).length === 1 && !playerStats.achievements.includes('perfect_game')) newOnes.push('perfect_game');
+      if (playerStats.streak >= 3 && !playerStats.achievements.includes('streak_3')) newOnes.push('streak_3');
+      if (playerStats.gamesPlayed >= 25 && !playerStats.achievements.includes('bookworm')) newOnes.push('bookworm');
+
+      const defs = {
+        first_win: { name:'First Victory', emoji:'🎉', description:'Win your first game' },
+        perfect_game: { name:'Perfect Game', emoji:'💎', description:'Win with only 1 guess' },
+        streak_3: { name:'Hot Streak', emoji:'🔥', description:'Win 3 days in a row' },
+        bookworm: { name:'Bookworm', emoji:'📚', description:'Play 25 games' }
+      };
+      newOnes.forEach(id => {
+        if (!playerStats.achievements.includes(id)) {
+          playerStats.achievements.push(id);
+          const a = defs[id];
+          const el = document.createElement('div');
+          el.className = 'achievement';
+          el.innerHTML = `<strong>${a.emoji} ${a.name}</strong><br><span style="font-size:14px;">${a.description}</span>`;
+          document.getElementById('achievement-display').appendChild(el);
+        }
+      });
+      saveGameHistory();
+    }
+
+    function resetGameUI() {
+      document.getElementById('guesses-section').classList.add('hidden');
+      document.getElementById('result-section').classList.add('hidden');
+      document.getElementById('input-section').classList.remove('hidden');
+      document.getElementById('guess-input').value = '';
+      document.getElementById('achievement-display').innerHTML = '';
+    }
+
+    function endGame(won) {
+      document.getElementById('input-section').classList.add('hidden');
+      document.getElementById('result-section').classList.remove('hidden');
+      updateCatalogLink(currentBook);
+
+      const res = document.getElementById('result-text');
+      const actual = guesses.filter(g => !g.isSkip).length;
+      if (won) {
+        res.innerHTML = `<div class="result win"><h3>Congratulations!</h3><p>You guessed "<strong>${currentBook.title}</strong>" by ${currentBook.author} in ${actual} guess${actual===1?'':'es'}!</p></div>`;
+      } else {
+        res.innerHTML = `<div class="result lose"><h3>Better luck next time!</h3><p>The book was "<strong>${currentBook.title}</strong>" by ${currentBook.author}</p></div>`;
+      }
+      updateStatsDisplay();
+    }
+
+    function saveGameState() {
+      const key = dateToKeyNY(selectedDate || nyDate());
+      gameHistory[key] = {
+        guesses: guesses,
+        cluesShown: cluesShown,
+        gameOver: gameOver,
+        won: !!guesses.find(g => g.correct),
+        // Save only minimal book info; archive reveals only on win
+        book: { date: currentBook.date, title: currentBook.title, author: currentBook.author }
+      };
+      saveGameHistory();
+    }
+
+    function loadGameState() {
+      const key = dateToKeyNY(selectedDate || nyDate());
+      const saved = gameHistory[key];
+      if (saved) {
+        guesses = saved.guesses || [];
+        cluesShown = saved.cluesShown || 1;
+        gameOver = !!saved.gameOver;
+        displayGuesses();
+        if (gameOver) endGame(saved.won);
+      } else {
+        guesses = [];
+        cluesShown = 1;
+        gameOver = false;
+      }
+    }
+
+    /**********************
+     * INPUT ACTIONS
+     **********************/
+    function skipClue() {
+      if (gameOver || cluesShown >= 6) return;
+      guesses.push({ text: 'SKIPPED', correct: false, isSkip: true });
+      cluesShown = Math.min(6, cluesShown + 1);
+      showClues();
+
+      if (guesses.length >= 6) {
+        gameOver = true;
+        updateDailyStats(false);
+        endGame(false);
+      }
+      displayGuesses();
+      saveGameState();
+    }
+
+    function makeGuess() {
+      if (gameOver) return;
+      const input = document.getElementById('guess-input');
+      const guess = input.value.trim();
+      if (!guess) return;
+
+      const isCorrect = titlesMatch(guess, currentBook.title);
+      guesses.push({ text: guess.toUpperCase(), correct: isCorrect });
+      input.value = '';
+
+      if (isCorrect) {
+        gameOver = true;
+        updateDailyStats(true);
+        checkAchievements(true);
+        endGame(true);
+      } else {
+        cluesShown = Math.min(6, cluesShown + 1);
+        showClues();
+        if (guesses.length >= 6) {
+          gameOver = true;
+          updateDailyStats(false);
+          endGame(false);
+        }
+      }
+      displayGuesses();
+      saveGameState();
+    }
+
+    /**********************
+     * ARCHIVE (Wordle-style)
+     **********************/
+    function showArchiveList() {
+      document.getElementById('game-section').classList.add('hidden');
+      document.getElementById('archive-section').classList.remove('hidden');
+
+      const list = document.getElementById('archive-list');
+      list.innerHTML = '';
+
+      // Only include books on/after GAME_START_DATE
+      const startNY = nyDate(GAME_START_DATE);
+      const todayNY = nyDate();
+      const datedBooks = books.filter(b => nyDate(new Date(b.date)) >= startNY)
+                              .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+      datedBooks.forEach(b => {
+        const d = nyDate(new Date(b.date));
+        const key = dateToKeyNY(d);
+        const isFuture = d > todayNY;
+        const saved = gameHistory[key];
+        const isPlayed = saved && saved.gameOver;
+        const won = isPlayed && saved.won;
+
+        const row = document.createElement('div');
+        let cls = 'archive-day ';
+        if (isFuture) cls += 'locked';
+        else if (isPlayed) cls += 'played';
+        else cls += 'unplayed';
+        row.className = cls;
+
+        let statusIcon = '⚪';
+        if (isFuture) statusIcon = '🔒';
+        else if (isPlayed && won) statusIcon = '✅';
+        else if (isPlayed && !won) statusIcon = '❌';
+
+        let bookInfo = '';
         if (isFuture) {
-            statusIcon = "🔒";
-            bookInfo = `<p class="archive-book locked">Available on ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>`;
-        } else if (dayData.gameOver && dayData.solved && book) {
-            statusIcon = "✅";
-            bookInfo = `<p class="archive-book">${book.title} by ${book.author}</p>`;
-        } else if (dayData.gameOver && !dayData.solved) {
-            statusIcon = "❌";
-            bookInfo = "<p class='archive-book locked'>Unsolved puzzle</p>";
+          bookInfo = `<p class="archive-book locked">Available on ${fmtShortNY(d)}</p>`;
+        } else if (isPlayed && won) {
+          // reveal only if solved
+          bookInfo = `<p class="archive-book">${b.title} by ${b.author}</p>`;
+        } else if (isPlayed && !won) {
+          bookInfo = `<p class="archive-book locked">Unsolved puzzle</p>`;
         } else {
-            statusIcon = "⚪";
-            bookInfo = "<p class='archive-book locked'>Unplayed puzzle</p>";
+          bookInfo = `<p class="archive-book locked">Unplayed puzzle</p>`;
         }
 
-        const archiveItem = document.createElement("div");
-        archiveItem.className = "archive-item";
-        archiveItem.innerHTML = `
-            <div class="archive-header">
-                <span class="archive-date">${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                <span class="archive-status">${statusIcon}</span>
-            </div>
+        row.innerHTML = `
+          <div class="archive-info">
+            <h4>${fmtShortNY(d)}</h4>
             ${bookInfo}
+          </div>
+          <div class="archive-status">${statusIcon}</div>
         `;
 
-        if (dayData.gameOver && book) {
-            archiveItem.addEventListener("click", () => {
-                loadGame(dateStr, { reviewMode: true });
-                document.getElementById("archiveModal").style.display = "none";
-            });
+        if (!isFuture) {
+          row.onclick = () => playArchiveDay(d);
+          row.style.cursor = 'pointer';
+        } else {
+          row.style.cursor = 'not-allowed';
+          row.onclick = () => {
+            alert('This puzzle will be available on ' + fmtLongNY(d));
+          };
         }
-
-        archiveList.appendChild(archiveItem);
-    });
-
-    document.getElementById("archiveModal").style.display = "block";
-}
-
-/* =====================
-   STATS MODAL
-===================== */
-function showStatsModal() {
-    const modal = document.getElementById("statsModal");
-    if (!modal) return;
-
-    // calc stats
-    const winPct = stats.gamesPlayed > 0 ? Math.round((stats.gamesWon / stats.gamesPlayed) * 100) : 0;
-
-    document.getElementById("gamesPlayed").textContent = stats.gamesPlayed;
-    document.getElementById("gamesWon").textContent = stats.gamesWon;
-    document.getElementById("winPct").textContent = winPct + "%";
-    document.getElementById("currentStreak").textContent = stats.currentStreak;
-    document.getElementById("maxStreak").textContent = stats.maxStreak;
-
-    // start countdown
-    startCountdown();
-
-    modal.style.display = "block";
-}
-
-/* =====================
-   COUNTDOWN TIMER
-===================== */
-function startCountdown() {
-    const el = document.getElementById("countdown");
-    if (!el) return;
-
-    function updateCountdown() {
-        const now = new Date();
-        const midnight = new Date();
-        midnight.setHours(24, 0, 0, 0);
-        const diff = midnight - now;
-
-        const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
-        const m = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, "0");
-        const s = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, "0");
-
-        el.textContent = `${h}:${m}:${s}`;
+        list.appendChild(row);
+      });
     }
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-}
+    function showTodaysGame() {
+      selectedDate = null;
+      document.getElementById('archive-section').classList.add('hidden');
+      document.getElementById('game-section').classList.remove('hidden');
+      initGame();
+    }
 
-/* =====================
-   SHARE RESULTS
-===================== */
-function shareResults() {
-    const dayData = gameData[currentDate];
-    if (!dayData) return;
+    function playArchiveDay(dateObj) {
+      selectedDate = nyDate(dateObj);
+      document.getElementById('archive-section').classList.add('hidden');
+      document.getElementById('game-section').classList.remove('hidden');
+      initGame();
+    }
 
-    // build emoji grid (placeholder, customize to match your game!)
-    const grid = dayData.guesses.map(g => g.correct ? "🟩" : "⬜").join("");
+    /**********************
+     * SHARE
+     **********************/
+    function shareResults() {
+      const key = dateToKeyNY(selectedDate || nyDate());
+      const data = gameHistory[key];
+      if (!data) return;
 
-    const text = `Shelf Life ${currentDate}\n${grid}\nPlay at: https://shelf-life-beta.vercel.app`;
+      const dayNum = getDayNumber();
+      const blocks = data.guesses.map(g => g.isSkip ? '⭕' : (g.correct ? '🟩' : '🟥'));
+      while (data.won && blocks.length < 6) blocks.push('⬜');
 
-    if (navigator.share) {
-        navigator.share({
-            title: "Shelf Life",
-            text: text
-        }).catch(() => {
-            navigator.clipboard.writeText(text);
-            alert("Results copied to clipboard!");
+      const result = data.won ? `${blocks.length}/6` : 'X/6';
+      const text = `Shelf Life #${dayNum} ${result}\n\n${blocks.join('')}\n\nCurrent streak: ${playerStats.streak}\n\nDaily book guessing game: ${window.location.href}`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = event?.target;
+          if (btn) {
+            const t = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.style.background = '#10b981';
+            setTimeout(()=>{ btn.textContent = t; btn.style.background = ''; }, 1500);
+          }
         });
-    } else {
-        navigator.clipboard.writeText(text);
-        alert("Results copied to clipboard!");
+      } else {
+        prompt('Copy this text to share:', text);
+      }
     }
-}
 
-/* =====================
-   INIT
-===================== */
-window.onload = function() {
-    const today = new Date();
-    const todayStr = today.toISOString().split("T")[0];
-    loadGame(todayStr);
-};
-</script>
+    /**********************
+     * INIT
+     **********************/
+    function initGame() {
+      if (!books.length) return;
+
+      loadGameHistory();
+      currentBook = getTodaysBook();
+      showCurrentDate();
+      resetGameUI();
+      loadGameState();
+      showClues();
+      updateStatsDisplay();
+    }
+
+    // Boot
+    (async function boot() {
+      // load books
+      const loaded = await loadBooksFromJSON();
+      indexBooks(loaded);
+
+      // wire enter key
+      document.getElementById('guess-input').addEventListener('keypress', e => {
+        if (e.key === 'Enter') makeGuess();
+      });
+
+      initGame();
+    })();
+
+    // expose for buttons
+    window.showTodaysGame = showTodaysGame;
+    window.showArchiveList = showArchiveList;
+    window.makeGuess = makeGuess;
+    window.skipClue = skipClue;
+    window.shareResults = shareResults;
+  </script>
+</body>
+</html>
