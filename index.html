@@ -1137,13 +1137,20 @@
     const archiveList = document.getElementById('archive-list');
     archiveList.innerHTML = '';
 
-    const sortedKeys = Object.keys(books).sort((a, b) => new Date(b) - new Date(a));
+    // find earliest puzzle date
+    const allDates = Object.keys(books).map(d => new Date(d));
+    const minDate = new Date(Math.min(...allDates));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    sortedKeys.forEach(dateStr => {
-        const date = new Date(dateStr);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+    // build list from earliest puzzle up to today (and maybe future)
+    const dates = [];
+    for (let d = new Date(today); d >= minDate; d.setDate(d.getDate() - 1)) {
+        dates.push(new Date(d));
+    }
 
+    dates.forEach(date => {
+        const dateStr = date.toISOString().split('T')[0];
         const isFuture = date > today;
         const dayData = gameData[dateStr] || {};
         const book = books[dateStr];
@@ -1152,20 +1159,16 @@
         let bookInfo = '';
 
         if (isFuture) {
-            // 🔒 Lock future puzzles
             statusIcon = '🔒';
             bookInfo = '<p class="archive-book locked">Available on ' +
                         date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</p>';
         } else if (dayData.gameOver && dayData.solved && book) {
-            // ✅ Solved puzzle → show book
             statusIcon = '✅';
             bookInfo = '<p class="archive-book">' + book.title + ' by ' + book.author + '</p>';
         } else if (dayData.gameOver && !dayData.solved) {
-            // ❌ Unsolved puzzle → hide book
             statusIcon = '❌';
             bookInfo = '<p class="archive-book locked">Unsolved puzzle</p>';
         } else {
-            // ⚪ Not played yet → hide book
             statusIcon = '⚪';
             bookInfo = '<p class="archive-book locked">Unplayed puzzle</p>';
         }
@@ -1180,15 +1183,18 @@
             ${bookInfo}
         `;
 
-        // ✅ Replay mode for completed games only (safe for streaks)
         if (dayData.gameOver && book) {
             archiveItem.addEventListener('click', () => {
-               function loadGame(dateStr, options = {}) {
-    const reviewMode = options.reviewMode || false;
-    currentDate = dateStr;
-
+                loadGame(dateStr, { reviewMode: true });
+                document.getElementById('archiveModal').style.display = 'none';
             });
         }
+
+        archiveList.appendChild(archiveItem);
+    });
+
+    document.getElementById('archiveModal').style.display = 'block';
+}
 
         archiveList.appendChild(archiveItem);
     });
