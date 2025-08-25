@@ -597,8 +597,9 @@
       }
       
       .input-group { 
+        display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         align-items: stretch;
       }
       
@@ -607,10 +608,17 @@
         padding: 14px; 
         font-size: 16px;
         min-height: 48px;
+        order: 1;
+      }
+      
+      .mobile-buttons {
+        display: flex;
+        gap: 10px;
+        order: 2;
       }
       
       .action-btn { 
-        width: 100%;
+        flex: 1;
         padding: 14px;
         min-height: 48px;
         font-size: 1.1rem;
@@ -683,8 +691,10 @@
         <div class="section-title">Your Guess</div>
         <div class="input-group">
           <input type="text" class="guess-input" id="guessInput" placeholder="Enter book title...">
-          <button class="action-btn submit-btn" id="submitBtn">→</button>
-          <button class="action-btn skip-btn" id="skipBtn">✕</button>
+          <div class="mobile-buttons">
+            <button class="action-btn submit-btn" id="submitBtn">→</button>
+            <button class="action-btn skip-btn" id="skipBtn">✕</button>
+          </div>
         </div>
         <div class="guess-feedback feedback-hidden" id="guessFeedback"></div>
       </div>
