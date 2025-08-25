@@ -256,6 +256,23 @@
       position: relative;
       z-index: 2;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transform: translateY(10px);
+      opacity: 0;
+      animation: slideUp 0.4s ease-out forwards;
+    }
+
+    .clue-entry:nth-child(1) { animation-delay: 0.1s; }
+    .clue-entry:nth-child(2) { animation-delay: 0.2s; }
+    .clue-entry:nth-child(3) { animation-delay: 0.3s; }
+    .clue-entry:nth-child(4) { animation-delay: 0.4s; }
+    .clue-entry:nth-child(5) { animation-delay: 0.5s; }
+    .clue-entry:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes slideUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
 
     /* Enhanced input section */
@@ -958,6 +975,8 @@ function normalizeTitle(str) {
     .replace(/[^\w\s]/g, ' ')
     .replace(/\s+/g, ' ')
     .replace(/\b(THE|A|AN|TO|OF|AND|IN|ON|AT|BY|FOR|WITH|FROM|IS|ARE|WAS|WERE)\b/g, '')
+    // Enhanced number conversions - both ways for better matching
+    .replace(/\bZERO\b/g, '0').replace(/\b0\b/g, 'ZERO')
     .replace(/\bONE\b/g, '1').replace(/\b1\b/g, 'ONE')
     .replace(/\bTWO\b/g, '2').replace(/\b2\b/g, 'TWO')
     .replace(/\bTHREE\b/g, '3').replace(/\b3\b/g, 'THREE')
@@ -968,18 +987,18 @@ function normalizeTitle(str) {
     .replace(/\bEIGHT\b/g, '8').replace(/\b8\b/g, 'EIGHT')
     .replace(/\bNINE\b/g, '9').replace(/\b9\b/g, 'NINE')
     .replace(/\bTEN\b/g, '10').replace(/\b10\b/g, 'TEN')
-    .replace(/\bELEVEN\b/g, '11').replace(/\b11\b/g, 'ELEVEN')
-    .replace(/\bTWELVE\b/g, '12').replace(/\b12\b/g, 'TWELVE')
-    .replace(/\bTHIRTEEN\b/g, '13').replace(/\b13\b/g, 'THIRTEEN')
-    .replace(/\bFOURTEEN\b/g, '14').replace(/\b14\b/g, 'FOURTEEN')
-    .replace(/\bFIFTEEN\b/g, '15').replace(/\b15\b/g, 'FIFTEEN')
-    .replace(/\bSIXTEEN\b/g, '16').replace(/\b16\b/g, 'SIXTEEN')
-    .replace(/\bSEVENTEEN\b/g, '17').replace(/\b17\b/g, 'SEVENTEEN')
-    .replace(/\bEIGHTEEN\b/g, '18').replace(/\b18\b/g, 'EIGHTEEN')
-    .replace(/\bNINETEEN\b/g, '19').replace(/\b19\b/g, 'NINETEEN')
-    .replace(/\bTWENTY\b/g, '20').replace(/\b20\b/g, 'TWENTY')
-    .replace(/\bTHIRTY\b/g, '30').replace(/\b30\b/g, 'THIRTY')
-    .replace(/\bFORTY\b/g, '40').replace(/\b40\b/g, 'FORTY')
+    // Handle compound numbers for books like "1984"
+    .replace(/\bNINETEEN EIGHTY FOUR\b/g, '1984')
+    .replace(/\b1984\b/g, 'NINETEEN EIGHTY FOUR')
+    .replace(/\bTWENTY TWENTY\b/g, '2020')
+    .replace(/\b2020\b/g, 'TWENTY TWENTY')
+    .replace(/\bTWO THOUSAND\b/g, '2000')
+    .replace(/\b2000\b/g, 'TWO THOUSAND')
+    // Handle other common book numbers
+    .replace(/\bFORTY EIGHT\b/g, '48')
+    .replace(/\b48\b/g, 'FORTY EIGHT')
+    .replace(/\bFIFTY\b/g, '50').replace(/\b50\b/g, 'FIFTY')
+    .replace(/\bHUNDRED\b/g, '100').replace(/\b100\b/g, 'HUNDRED')
     .trim();
 }
 
@@ -1014,24 +1033,34 @@ function submitGuess() {
   gameData.guesses.push({ text: guess, correct: isCorrect, isSkip: false });
   
   if (feedback) {
+    // Clear any existing feedback classes and timers
     feedback.classList.remove('feedback-hidden', 'feedback-correct', 'feedback-incorrect');
     
     if (isCorrect) {
       feedback.classList.add('feedback-correct');
       feedback.textContent = '✅ Correct! Book found!';
-      setTimeout(() => endGame(true), 1500);
+      
+      // Auto-hide feedback and end game
+      setTimeout(() => {
+        feedback.classList.add('feedback-hidden');
+        endGame(true);
+      }, 2000);
     } else {
       feedback.classList.add('feedback-incorrect');
       feedback.textContent = `❌ Not quite right. Try again!`;
       
       if (gameData.guesses.length >= 6) {
-        setTimeout(() => endGame(false), 1500);
+        setTimeout(() => {
+          feedback.classList.add('feedback-hidden');
+          endGame(false);
+        }, 2000);
       } else {
         gameData.cluesShown = Math.min(6, gameData.cluesShown + 1);
         setTimeout(() => {
           showClues();
+          // Auto-hide feedback after showing new clue
           feedback.classList.add('feedback-hidden');
-        }, 800);
+        }, 1500);
       }
     }
   }
@@ -1054,13 +1083,17 @@ function skipClue() {
     feedback.textContent = '⏭️ Clue skipped';
     
     if (gameData.guesses.length >= 6) {
-      setTimeout(() => endGame(false), 1500);
+      setTimeout(() => {
+        feedback.classList.add('feedback-hidden');
+        endGame(false);
+      }, 2000);
     } else {
       gameData.cluesShown = Math.min(6, gameData.cluesShown + 1);
       setTimeout(() => {
         showClues();
+        // Auto-hide feedback after showing new clue
         feedback.classList.add('feedback-hidden');
-      }, 800);
+      }, 1500);
     }
   }
   
@@ -1226,6 +1259,14 @@ function showArchive() {
 
 function showToday() {
   gameData.selectedDate = null;
+  
+  // Clear feedback when switching games
+  const feedback = document.getElementById('guessFeedback');
+  if (feedback) {
+    feedback.classList.add('feedback-hidden');
+    feedback.textContent = '';
+  }
+  
   document.getElementById('gameSection').classList.remove('hidden');
   document.getElementById('archiveSection').classList.add('hidden');
   loadGame();
@@ -1234,6 +1275,13 @@ function showToday() {
 function loadGame() {
   const gameDate = gameData.selectedDate || getTodayNY();
   const savedGame = gameData.gameHistory[gameDate];
+  
+  // Clear any existing feedback when loading a game
+  const feedback = document.getElementById('guessFeedback');
+  if (feedback) {
+    feedback.classList.add('feedback-hidden');
+    feedback.textContent = '';
+  }
   
   if (savedGame) {
     gameData.guesses = [...savedGame.guesses];
