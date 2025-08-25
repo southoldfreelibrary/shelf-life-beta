@@ -597,20 +597,21 @@
       }
       
       .input-group { 
-        flex-direction: row;
-        gap: 8px;
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
       }
       
       .guess-input { 
-        flex: 1;
+        width: 100%;
         padding: 14px; 
         font-size: 16px;
         min-height: 48px;
       }
       
       .action-btn { 
-        padding: 14px 16px;
-        min-width: 60px;
+        width: 100%;
+        padding: 14px;
         min-height: 48px;
         font-size: 1.1rem;
       }
@@ -754,10 +755,15 @@
 const gameData = {
   books: [
     {
+      id: 1,
       date: "2025-08-21",
       title: "NINETEEN EIGHTY-FOUR",
       author: "George Orwell",
-      theme: "Dystopian Fiction",
+      year: 1949,
+      genre: "Dystopian Fiction",
+      tags: ["surveillance", "totalitarianism", "classic"],
+      difficulty: "Medium",
+      theme: "Dystopian Fiction", // Keep for backward compatibility
       clues: [
         "In a surveillance state where Big Brother watches all",
         "Author: British author, Orwell", 
@@ -765,12 +771,18 @@ const gameData = {
         "Themes: Totalitarianism, surveillance, truth manipulation, individual freedom",
         "Setting: Dystopian London under constant government monitoring",
         "Character: Winston Smith"
-      ]
+      ],
+      catalogUrl: "https://southold-suffc.na.iiivega.com/search/title?query=nineteen%20eighty%20four"
     },
     {
+      id: 2,
       date: "2025-08-22",
       title: "THE GREAT GATSBY",
-      author: "F. Scott Fitzgerald", 
+      author: "F. Scott Fitzgerald",
+      year: 1925,
+      genre: "American Literature", 
+      tags: ["jazz-age", "american-dream", "classic"],
+      difficulty: "Easy",
       theme: "American Literature",
       clues: [
         "Tobey Maguire played Nick in the 2013 film adaptation",
@@ -779,13 +791,19 @@ const gameData = {
         "Entered public domain in 2021", 
         "A 1925 novel about chasing the American Dream",
         "Main character: Jay Gatsby"
-      ]
+      ],
+      catalogUrl: "https://southold-suffc.na.iiivega.com/search/title?query=great%20gatsby"
     },
     {
+      id: 3,
       date: "2025-08-23",
       title: "THE 48 LAWS OF POWER",
       author: "Robert Greene",
-      theme: "Self-Help", 
+      year: 1998,
+      genre: "Self-Help",
+      tags: ["strategy", "influence", "psychology"],
+      difficulty: "Hard",
+      theme: "Self-Help",
       clues: [
         "A numbered guide to mastering influence",
         "Uses stories of Napoleon, Cleopatra, Sun Tzu",
@@ -793,12 +811,18 @@ const gameData = {
         "Published in 1998, still a bestseller",
         "Known as the 'Machiavellian Bible'",
         "Author: Robert Greene"
-      ]
+      ],
+      catalogUrl: "https://southold-suffc.na.iiivega.com/search/title?query=48%20laws%20power"
     },
     {
+      id: 4,
       date: "2025-08-24",
       title: "EVERYTHING IS TUBERCULOSIS", 
       author: "John Green",
+      year: 2025,
+      genre: "Nonfiction",
+      tags: ["medical-history", "science", "humor"],
+      difficulty: "Medium",
       theme: "Nonfiction",
       clues: [
         "A 2025 nonfiction book about TB (infectious disease)",
@@ -807,12 +831,18 @@ const gameData = {
         "Written by John Green (The Fault in Our Stars)",
         "Connects science, humor, and humanity",
         "Narrator: John Green"
-      ]
+      ],
+      catalogUrl: "https://southold-suffc.na.iiivega.com/search/title?query=everything%20tuberculosis"
     },
     {
+      id: 5,
       date: "2025-08-25",
       title: "TO KILL A MOCKINGBIRD",
       author: "Harper Lee",
+      year: 1960,
+      genre: "Social Justice",
+      tags: ["civil-rights", "coming-of-age", "pulitzer"],
+      difficulty: "Easy",
       theme: "Social Justice",
       clues: [
         "A trial divides a small Alabama town",
@@ -821,7 +851,8 @@ const gameData = {
         "Frequently challenged in schools",
         "Published in 1960, set in 1930s Alabama",
         "Narrator: Scout Finch"
-      ]
+      ],
+      catalogUrl: "https://southold-suffc.na.iiivega.com/search/title?query=kill%20mockingbird"
     }
   ],
   
@@ -1063,8 +1094,9 @@ function showResults(won) {
       <div class="result-stamp win-stamp">
         <h2>🎉 Great Job! 🎉</h2>
         <p><strong>"${gameData.currentBook.title}"</strong><br>
-        by ${gameData.currentBook.author}</p>
+        by ${gameData.currentBook.author} (${gameData.currentBook.year})</p>
         <p>Found in ${gameData.guesses.length}/6 guesses!</p>
+        <p><em>Genre: ${gameData.currentBook.genre}</em></p>
       </div>
     `;
   } else {
@@ -1073,7 +1105,8 @@ function showResults(won) {
         <h2>📋 OVERDUE NOTICE 📋</h2>
         <p>The book was:<br>
         <strong>"${gameData.currentBook.title}"</strong><br>
-        by ${gameData.currentBook.author}</p>
+        by ${gameData.currentBook.author} (${gameData.currentBook.year})</p>
+        <p><em>Genre: ${gameData.currentBook.genre}</em></p>
         <p>Better luck tomorrow!</p>
       </div>
     `;
@@ -1085,8 +1118,13 @@ function showResults(won) {
   document.getElementById('maxStreak').textContent = gameData.playerStats.maxStreak;
   
   const catalogLink = document.getElementById('catalogLink');
-  const searchQuery = encodeURIComponent(gameData.currentBook.title);
-  catalogLink.href = `https://southold-suffc.na.iiivega.com/search/title?query=${searchQuery}`;
+  // Use pre-built catalog URL if available, otherwise construct it
+  if (gameData.currentBook.catalogUrl) {
+    catalogLink.href = gameData.currentBook.catalogUrl;
+  } else {
+    const searchQuery = encodeURIComponent(gameData.currentBook.title);
+    catalogLink.href = `https://southold-suffc.na.iiivega.com/search/title?query=${searchQuery}`;
+  }
   catalogLink.target = '_blank';
   
   resultSection.classList.remove('hidden');
