@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Checked Out | Southold Free Library</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Special+Elite&family=Poppins:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
     * { box-sizing: border-box; }
     body {
-      font-family: 'Poppins', Arial, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       max-width: 600px; margin: 0 auto; padding: 20px;
       background: linear-gradient(135deg, #4A90A4 0%, #5BA4B8 100%);
       min-height: 100vh;
@@ -83,7 +83,7 @@
     }
 
     .library-label {
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.7rem;
       letter-spacing: 1px;
       color: #5A4A3A;
@@ -93,7 +93,7 @@
     }
 
     .game-title {
-      font-family: 'Courier Prime', monospace;
+      font-family: 'Inter', sans-serif;
       font-size: 2.2rem;
       font-weight: 700;
       color: #2D2D2D;
@@ -102,7 +102,7 @@
     }
 
     .subtitle {
-      font-family: 'Courier Prime', monospace;
+      font-family: 'Inter', sans-serif;
       font-style: italic;
       color: #5A4A3A;
       font-size: 0.9rem;
@@ -118,7 +118,7 @@
       background: rgba(255, 255, 255, 0.4);
       border: 2px dashed #8B755A;
       border-radius: 4px;
-      font-family: 'Courier Prime', monospace;
+      font-family: 'JetBrains Mono', monospace;
       position: relative;
       z-index: 2;
     }
@@ -130,7 +130,7 @@
       right: 20px;
       background: #F5F3E7;
       padding: 0 8px;
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.6rem;
       color: #DC2626;
       font-weight: bold;
@@ -164,15 +164,15 @@
     }
 
     .stat-label {
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.7rem;
       color: #5A4A3A;
       margin-bottom: 2px;
     }
 
     .stat-value {
-      font-family: 'Courier Prime', monospace;
-      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
       color: #2D2D2D;
       font-size: 1rem;
     }
@@ -183,7 +183,7 @@
     }
 
     .stamp-btn {
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       background: #DC2626;
       color: white;
       border: 3px solid #991B1B;
@@ -192,7 +192,7 @@
       margin: 0 10px 10px 10px;
       cursor: pointer;
       font-size: 0.8rem;
-      font-weight: bold;
+      font-weight: 600;
       letter-spacing: 0.5px;
       transform: rotate(-1deg);
       box-shadow: 
@@ -200,6 +200,7 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
       transition: all 0.2s ease;
       position: relative;
+      min-height: 48px;
     }
 
     .stamp-btn::after {
@@ -232,7 +233,7 @@
     }
 
     .section-title {
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
       color: #5A4A3A;
       margin-bottom: 10px;
@@ -250,7 +251,7 @@
       padding: 12px;
       margin: 8px 0;
       border-radius: 0 4px 4px 0;
-      font-family: 'Courier Prime', monospace;
+      font-family: 'Inter', sans-serif;
       color: #2D2D2D;
       position: relative;
       z-index: 2;
@@ -275,7 +276,7 @@
       left: 20px;
       background: #F5F3E7;
       padding: 0 8px;
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.6rem;
       color: #5A4A3A;
       font-weight: bold;
@@ -289,16 +290,44 @@
       margin-top: 10px;
     }
 
+    .guess-feedback {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .feedback-correct {
+      background: rgba(5, 150, 105, 0.2);
+      border: 1px solid #059669;
+      color: #065F46;
+    }
+
+    .feedback-incorrect {
+      background: rgba(220, 38, 38, 0.2);
+      border: 1px solid #DC2626;
+      color: #991B1B;
+    }
+
+    .feedback-hidden {
+      display: none;
+    }
+
     .guess-input {
       flex: 1;
       padding: 10px;
       border: 2px solid #8B755A;
       border-radius: 4px;
-      font-family: 'Courier Prime', monospace;
+      font-family: 'JetBrains Mono', monospace;
       background: rgba(255, 255, 255, 0.9);
       color: #2D2D2D;
       font-size: 14px;
       box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+      min-height: 48px;
     }
 
     .guess-input:focus {
@@ -308,20 +337,22 @@
     }
 
     .action-btn {
-      padding: 10px 15px;
+      padding: 16px 20px;
       border: none;
-      border-radius: 4px;
-      font-family: 'Courier Prime', monospace;
-      font-weight: 700;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 1.2rem;
+      min-width: 60px;
+      min-height: 48px;
     }
 
     .submit-btn {
       background: #059669;
       color: white;
-      min-width: 45px;
     }
 
     .submit-btn:hover {
@@ -333,7 +364,6 @@
     .skip-btn {
       background: #DC2626;
       color: white;
-      min-width: 45px;
     }
 
     .skip-btn:hover {
@@ -350,7 +380,7 @@
       padding: 10px 12px;
       margin: 6px 0;
       border-radius: 4px;
-      font-family: 'Courier Prime', monospace;
+      font-family: 'Inter', sans-serif;
       position: relative;
       z-index: 2;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -419,14 +449,14 @@
     }
 
     .final-stat-number {
-      font-family: 'Courier Prime', monospace;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1.3rem;
       color: #2D2D2D;
     }
 
     .final-stat-label {
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.6rem;
       color: #5A4A3A;
       text-transform: uppercase;
@@ -440,19 +470,20 @@
     }
 
     .share-btn {
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       background: #1E3A8A;
       color: white;
       border: 2px solid #1E40AF;
-      border-radius: 4px;
-      padding: 8px 16px;
-      margin: 5px;
+      border-radius: 6px;
+      padding: 12px 20px;
+      margin: 8px;
       cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: bold;
+      font-size: 0.9rem;
+      font-weight: 600;
       letter-spacing: 0.5px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       transition: all 0.2s ease;
+      min-height: 48px;
     }
 
     .share-btn:hover {
@@ -481,7 +512,7 @@
       left: 20px;
       background: #F5F3E7;
       padding: 0 8px;
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.6rem;
       color: #5A4A3A;
       font-weight: bold;
@@ -489,13 +520,13 @@
     }
 
     .library-info a {
-      font-family: 'Courier Prime', monospace;
+      font-family: 'JetBrains Mono', monospace;
       background: #1E3A8A;
       color: white;
       padding: 8px 16px;
       text-decoration: none;
       border-radius: 4px;
-      font-weight: 700;
+      font-weight: 600;
       display: inline-block;
       margin-top: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -522,14 +553,14 @@
     }
 
     .countdown-label {
-      font-family: 'Special Elite', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
       color: #5A4A3A;
       margin-bottom: 5px;
     }
 
     .countdown-time {
-      font-family: 'Courier Prime', monospace;
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 1.2rem;
       color: #2D2D2D;
@@ -560,23 +591,40 @@
         display: block; 
         width: 90%; 
         margin: 8px auto; 
-        transform: rotate(0deg); 
+        transform: rotate(0deg);
+        min-height: 48px;
+        font-size: 0.9rem;
       }
+      
       .input-group { 
-        flex-direction: column; 
-        gap: 10px; 
+        flex-direction: row;
+        gap: 8px;
       }
+      
       .guess-input { 
-        width: 100%; 
-        padding: 12px; 
-        font-size: 16px; 
+        flex: 1;
+        padding: 14px; 
+        font-size: 16px;
+        min-height: 48px;
       }
+      
       .action-btn { 
-        width: 100%; 
-        padding: 12px; 
+        padding: 14px 16px;
+        min-width: 60px;
+        min-height: 48px;
+        font-size: 1.1rem;
       }
+      
       .final-stats { 
         grid-template-columns: repeat(2, 1fr); 
+      }
+      
+      .share-btn {
+        width: 90%;
+        margin: 8px auto;
+        display: block;
+        padding: 14px;
+        min-height: 48px;
       }
     }
   </style>
@@ -637,6 +685,7 @@
           <button class="action-btn submit-btn" id="submitBtn">→</button>
           <button class="action-btn skip-btn" id="skipBtn">✕</button>
         </div>
+        <div class="guess-feedback feedback-hidden" id="guessFeedback"></div>
       </div>
     </div>
 
@@ -800,12 +849,9 @@ function getTodaysBook() {
   const book = gameData.books.find(b => b.date === targetDate);
   if (book) return book;
   
-  // For dates not in our book list, cycle through them
-  const startDate = new Date('2025-08-21');
-  const today = gameData.selectedDate ? new Date(gameData.selectedDate) : new Date();
-  const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-  const index = daysDiff % gameData.books.length;
-  return gameData.books[Math.max(0, index)];
+  const dayNum = Math.max(1, Math.floor((new Date() - new Date('2025-08-21')) / 86400000) + 1);
+  const index = (dayNum - 1) % gameData.books.length;
+  return gameData.books[index];
 }
 
 function updateDisplay() {
@@ -900,10 +946,8 @@ function checkGuess(guess) {
   const normalizedGuess = normalizeTitle(guess);
   const normalizedTitle = normalizeTitle(gameData.currentBook.title);
   
-  // Exact match
   if (normalizedGuess === normalizedTitle) return true;
   
-  // Check if guess contains most significant words from the title
   const guessWords = normalizedGuess.split(' ').filter(w => w.length > 2);
   const titleWords = normalizedTitle.split(' ').filter(w => w.length > 2);
   
@@ -920,6 +964,7 @@ function checkGuess(guess) {
 
 function submitGuess() {
   const input = document.getElementById('guessInput');
+  const feedback = document.getElementById('guessFeedback');
   const guess = input.value.trim();
   
   if (!guess || gameData.gameOver) return;
@@ -927,13 +972,27 @@ function submitGuess() {
   const isCorrect = checkGuess(guess);
   gameData.guesses.push({ text: guess, correct: isCorrect, isSkip: false });
   
-  if (isCorrect) {
-    endGame(true);
-  } else if (gameData.guesses.length >= 6) {
-    endGame(false);
-  } else {
-    gameData.cluesShown = Math.min(6, gameData.cluesShown + 1);
-    showClues();
+  if (feedback) {
+    feedback.classList.remove('feedback-hidden', 'feedback-correct', 'feedback-incorrect');
+    
+    if (isCorrect) {
+      feedback.classList.add('feedback-correct');
+      feedback.textContent = '✅ Correct! Book found!';
+      setTimeout(() => endGame(true), 1500);
+    } else {
+      feedback.classList.add('feedback-incorrect');
+      feedback.textContent = `❌ Not quite right. Try again!`;
+      
+      if (gameData.guesses.length >= 6) {
+        setTimeout(() => endGame(false), 1500);
+      } else {
+        gameData.cluesShown = Math.min(6, gameData.cluesShown + 1);
+        setTimeout(() => {
+          showClues();
+          feedback.classList.add('feedback-hidden');
+        }, 800);
+      }
+    }
   }
   
   displayGuesses();
@@ -944,13 +1003,24 @@ function submitGuess() {
 function skipClue() {
   if (gameData.gameOver) return;
   
+  const feedback = document.getElementById('guessFeedback');
+  
   gameData.guesses.push({ text: '(skipped)', correct: false, isSkip: true });
   
-  if (gameData.guesses.length >= 6) {
-    endGame(false);
-  } else {
-    gameData.cluesShown = Math.min(6, gameData.cluesShown + 1);
-    showClues();
+  if (feedback) {
+    feedback.classList.remove('feedback-hidden', 'feedback-correct', 'feedback-incorrect');
+    feedback.classList.add('feedback-incorrect');
+    feedback.textContent = '⏭️ Clue skipped';
+    
+    if (gameData.guesses.length >= 6) {
+      setTimeout(() => endGame(false), 1500);
+    } else {
+      gameData.cluesShown = Math.min(6, gameData.cluesShown + 1);
+      setTimeout(() => {
+        showClues();
+        feedback.classList.add('feedback-hidden');
+      }, 800);
+    }
   }
   
   displayGuesses();
@@ -960,7 +1030,6 @@ function skipClue() {
 function endGame(won) {
   gameData.gameOver = true;
   
-  // Update stats
   gameData.playerStats.gamesPlayed++;
   if (won) {
     gameData.playerStats.gamesWon++;
@@ -972,7 +1041,6 @@ function endGame(won) {
   
   gameData.playerStats.lastPlayDate = getTodayNY();
   
-  // Save to history
   const gameDate = gameData.selectedDate || getTodayNY();
   gameData.gameHistory[gameDate] = {
     won: won,
@@ -980,7 +1048,6 @@ function endGame(won) {
     cluesUsed: gameData.cluesShown
   };
   
-  // Show results
   showResults(won);
   document.getElementById('inputSection').classList.add('hidden');
   
@@ -994,7 +1061,7 @@ function showResults(won) {
   if (won) {
     resultText.innerHTML = `
       <div class="result-stamp win-stamp">
-        <h2>📚 BOOK CHECKED OUT! 📚</h2>
+        <h2>🎉 Great Job! 🎉</h2>
         <p><strong>"${gameData.currentBook.title}"</strong><br>
         by ${gameData.currentBook.author}</p>
         <p>Found in ${gameData.guesses.length}/6 guesses!</p>
@@ -1012,15 +1079,15 @@ function showResults(won) {
     `;
   }
   
-  // Update final stats
   document.getElementById('gamesPlayed').textContent = gameData.playerStats.gamesPlayed;
   document.getElementById('winPercent').textContent = Math.round((gameData.playerStats.gamesWon / gameData.playerStats.gamesPlayed) * 100) + '%';
   document.getElementById('currentStreak').textContent = gameData.playerStats.streak;
   document.getElementById('maxStreak').textContent = gameData.playerStats.maxStreak;
   
-  // Update catalog link
   const catalogLink = document.getElementById('catalogLink');
-  catalogLink.href = `https://catalog.southoldlibrary.org/search/?searchtype=title&searcharg=${encodeURIComponent(gameData.currentBook.title)}`;
+  const searchQuery = encodeURIComponent(gameData.currentBook.title);
+  catalogLink.href = `https://southold-suffc.na.iiivega.com/search/title?query=${searchQuery}`;
+  catalogLink.target = '_blank';
   
   resultSection.classList.remove('hidden');
 }
@@ -1034,7 +1101,13 @@ function generateShareText() {
   const won = gameData.gameHistory[gameDate]?.won || false;
   const guessCount = gameData.guesses.length;
   
-  let shareText = `Checked Out #${dayNum} ${won ? guessCount : 'X'}/6\n\n`;
+  let shareText = `Checked Out #${dayNum} ${won ? guessCount : 'X'}/6\n`;
+  
+  if (won) {
+    shareText += `Solved in ${guessCount} clue${guessCount > 1 ? 's' : ''} ✅\n\n`;
+  } else {
+    shareText += `Better luck tomorrow! 📚\n\n`;
+  }
   
   gameData.guesses.forEach(guess => {
     if (guess.isSkip) {
@@ -1046,7 +1119,7 @@ function generateShareText() {
     }
   });
   
-  shareText += '\n\nSoutholdLibrary.org';
+  shareText += '\n\nPlay here: https://shelf-life-beta.vercel.app';
   return shareText;
 }
 
@@ -1087,10 +1160,9 @@ function showArchive() {
     archiveItem.style.cursor = 'pointer';
     
     const status = history ? (history.won ? '🟩' : '🟥') : '⬜';
-    // Don't show the book title/author in archive to avoid spoilers
     archiveItem.innerHTML = `
       ${status} <strong>Game #${index + 1}</strong> - ${book.date}<br>
-      ${book.theme} book
+      <span style="color: #5A4A3A; font-size: 0.85em;">${book.theme} book</span>
     `;
     
     archiveItem.onclick = () => {
@@ -1189,9 +1261,15 @@ document.getElementById('guessInput').addEventListener('keypress', (e) => {
 });
 
 // Check for native share support
-if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) {
+if (navigator.share) {
   document.getElementById('nativeShareBtn').style.display = 'inline-block';
-  document.getElementById('nativeShareBtn').onclick = shareResults;
+  document.getElementById('nativeShareBtn').onclick = () => {
+    const shareText = generateShareText();
+    navigator.share({
+      title: 'Checked Out - Southold Free Library',
+      text: shareText
+    }).catch(err => console.log('Error sharing:', err));
+  };
 }
 
 // Initialize game
